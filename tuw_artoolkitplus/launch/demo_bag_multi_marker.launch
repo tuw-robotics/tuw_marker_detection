@@ -1,0 +1,21 @@
+<launch>
+
+   <!-- laod bag file -->
+  <node pkg="rosbag" type="play" name="player" output="screen" args="--loop --clock --rate 1.0 $(find tuw_artoolkitplus)/bags/moving_arplus_multi_marker_2013-11-20-15-28-44.bag"/>
+    <node pkg="image_view" type="image_view" name="image_view" output="screen" >
+    <remap from="image" to="camera/image_raw"/>   		
+  </node>
+
+   <!-- undistore image -->
+  <group ns="camera" > 
+    <node pkg="image_proc" type="image_proc" name="image_proc" />
+  </group>
+
+   <!-- RVIZ -->
+  <include file="$(find tuw_artoolkitplus)/launch/rviz.launch" />
+
+   <!-- laod detection   -->
+  <include file="$(find tuw_artoolkitplus)/launch/multi_marker.launch" />
+
+</launch>
+

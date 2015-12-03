@@ -1,0 +1,11 @@
+<launch>   
+
+  <node pkg="tuw_uvc" type="tuw_uvc_node" name="camera" >
+    <param name="video_device" value="/dev/video1"/>
+    <param name="camera_info_url" value="file://$(find tuw_uvc)/cfg/logitech.yml" />
+    <param name="frame_id" value="camera"/>
+  </node>
+  <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="reconfigure_gui" >
+  </node>
+   
+</launch>

@@ -1,0 +1,19 @@
+<launch>   
+
+  <arg name="device" default="0" />
+  <arg name="show" default="false" />
+  
+  <node pkg="tuw_uvc" type="logitech_sphere_node" name="camera"  output="screen">
+    <param name="video_device" value="/dev/video$(arg device)"/>
+    <param name="show_camera_image" value="$(arg show)"/>  
+    <param name="convert_image" value="1"/>    
+    <param name="camera_info_url" value="file://$(find tuw_uvc)/cfg/logitech.yml" />
+    <param name="frame_id" value="camera"/>
+  </node>
+   
+   <!-- undistore image -->
+  <group ns="camera" > 
+    <node pkg="image_proc" type="image_proc" name="image_proc" />
+  </group>
+  
+</launch>

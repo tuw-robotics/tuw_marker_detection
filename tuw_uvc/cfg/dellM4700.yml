@@ -1,0 +1,19 @@
+image_width: 1280
+image_height: 720
+camera_name: DellM4700
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [988.782371, 0, 645.825384, 0, 992.320728, 414.810766, 0, 0, 1]
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.051421, 0.254321, -0.000585, 0.003057, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [1034.543701, 0, 647.843064, 0, 0, 1033.619507, 411.733983, 0, 0, 0, 1, 0]

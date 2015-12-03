@@ -1,0 +1,10 @@
+<launch>
+  
+   <!-- laod camera -->
+  <include file="$(find tuw_uvc)/launch/general.launch" />
+  
+   <!-- laod detection -->
+  <include file="$(find tuw_artoolkitplus)/launch/multi_marker.launch" />
+
+</launch>
+

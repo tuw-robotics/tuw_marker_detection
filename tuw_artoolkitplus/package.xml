@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<package>
+  <name>tuw_artoolkitplus</name>
+  <version>0.0.0</version>
+  <description>The tuw_artoolkitplus package is a wrapper around the ARToolKitPlus software library for ROS.
+  The ARToolKitPlus is a extended version of ARToolKit's library with a class-based API but with no VRML and camera library.
+  It is also optimized to work with a set of precoded marker, so no marker training is needed.
+  The ARToolKitPlus library was published under GPL2, thanks for that work goes to all people listed in a ./3rdParty/ARToolKitPlus/THANKS.
+  More details about ARToolKitPlus package can be found under http://studierstube.org/handheld_ar/artoolkitplus.php   
+  </description>
+
+  <maintainer email="markus.bader@tuwien.ac.at">Markus Bader</maintainer>
+
+
+  <license>GPLv2</license>
+
+
+  <url type="website">http://studierstube.org/handheld_ar/artoolkitplus.php</url>
+
+
+  <author email="markus.bader@tuwien.ac.at">Markus Bader</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>image_geometry</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>    
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>  
+  <build_depend>message_generation</build_depend>
+  
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>image_geometry</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>     
+  <run_depend>std_msgs</run_depend> 
+  <run_depend>geometry_msgs</run_depend> 
+  <run_depend>message_runtime</run_depend>
+
+</package>
