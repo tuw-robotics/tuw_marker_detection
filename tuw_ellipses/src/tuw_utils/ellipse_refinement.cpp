@@ -5,13 +5,13 @@
  */
 
 
-#include "v4r_utils/ellipse_refinement.h"
+#include "tuw_utils/ellipse_refinement.h"
 #include <Eigen/Dense>
 #include <iostream>
 //#include <opencv2/highgui/highgui.hpp>
 
 
-namespace V4R
+namespace tuw
 {
 
 template<typename T>

@@ -5,7 +5,7 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-#include "v4r_utils/canny.h"
+#include "tuw_utils/canny.h"
 
 void help() {
     std::cout << "\nThis is a demo that shows an anhanced canny edge detection\n"

@@ -15,7 +15,7 @@
 
 #include <opencv/cv.h>
 
-namespace V4R {
+namespace tuw {
 
 
 /**

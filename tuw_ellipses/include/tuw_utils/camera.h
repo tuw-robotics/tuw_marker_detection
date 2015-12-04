@@ -26,7 +26,7 @@
 #include "opencv/cv.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
-namespace V4R {
+namespace tuw {
 
 class Camera {
 public:

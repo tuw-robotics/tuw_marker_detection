@@ -33,7 +33,7 @@
 int main(int argc, char **argv) {
 
     ros::init(argc, argv, "ellipses_detection");
-    V4R::EllipsesDetectionNode my_node;
+    tuw::EllipsesDetectionNode my_node;
     my_node.init();
     ros::spin();
     return 0;

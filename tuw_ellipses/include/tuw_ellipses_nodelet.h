@@ -29,8 +29,8 @@
  ***************************************************************************/
 
 
-#ifndef V4R_ELLIPSES_NODE_H
-#define V4R_ELLIPSES_NODE_H
+#ifndef TUW_ELLIPSES_NODE_H
+#define TUW_ELLIPSES_NODE_H
 
 #include "ros/ros.h"
 #include <nodelet/nodelet.h>
@@ -45,7 +45,7 @@
 #include <tuw_ellipses/ellipses.h>
 #include <tuw_ellipses/markers.h>
 
-namespace V4R {
+namespace tuw {
 
 /// ROS Node
 class EllipsesDetectionNode : public EllipsesDetection , public nodelet::Nodelet {
@@ -98,4 +98,4 @@ private: // variables
 };
 }
 
-#endif //V4R_ELLIPSES_NODE_H
+#endif //TUW_ELLIPSES_NODE_H

@@ -4,13 +4,13 @@
  * (C) 2014, Johann Prankl, Aitor Aldoma Buchaca
  */
 
-#ifndef  V4R_ELLIPSE_REFINEMENT_H
-#define  V4R_ELLIPSE_REFINEMENT_H
+#ifndef  TUW_ELLIPSE_REFINEMENT_H
+#define  TUW_ELLIPSE_REFINEMENT_H
 
 #include <vector>
 #include <opencv2/core/core.hpp>
 
-namespace V4R
+namespace tuw
 {
 
 class EllipseRefinement
@@ -113,4 +113,4 @@ public:
 
 }
 
-#endif //V4R_ELLIPSE_REFINEMENT_H
+#endif //TUW_ELLIPSE_REFINEMENT_H

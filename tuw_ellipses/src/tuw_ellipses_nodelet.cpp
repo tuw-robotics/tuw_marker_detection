@@ -37,8 +37,8 @@
 #include <tuw_ellipses/TransformArrayStamped.h>
 
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_DECLARE_CLASS(V4R, EllipsesDetectionNode, V4R::EllipsesDetectionNode, nodelet::Nodelet)
-using namespace V4R;
+PLUGINLIB_DECLARE_CLASS(tuw, EllipsesDetectionNode, tuw::EllipsesDetectionNode, nodelet::Nodelet)
+using namespace tuw;
 
 EllipsesDetectionNode::~EllipsesDetectionNode() {
 }

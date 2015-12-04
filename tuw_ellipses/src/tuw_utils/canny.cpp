@@ -41,8 +41,8 @@
 
 #include "opencv/cv.h"
 
-namespace V4R {
-CV_IMPL void v4rCanny( const void* srcarr, void* dstarr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr,
+namespace tuw {
+CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr,
                       double low_thresh, double high_thresh,
                       int aperture_size )
 {
@@ -369,7 +369,7 @@ void Canny( const cv::Mat& image, cv::Mat& edges, cv::Mat& gradient, cv::Mat& di
     sobel_dx.create(src.size(), CV_16SC1);
     sobel_dy.create(src.size(), CV_16SC1);
     CvMat _src = src, _dst = edges, _gradientarr = gradient, _directionarr = direction, dxarr = sobel_dx, dyarr = sobel_dy;
-    v4rCanny( &_src, &_dst, &_gradientarr, &_directionarr, &dxarr, &dyarr, threshold1, threshold2,
+    tuwCanny( &_src, &_dst, &_gradientarr, &_directionarr, &dxarr, &dyarr, threshold1, threshold2,
         apertureSize + (L2gradient ? CV_CANNY_L2_GRADIENT : 0));
 }
 };

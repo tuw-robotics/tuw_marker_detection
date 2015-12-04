@@ -69,11 +69,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(v4r_utils 
-   src/v4r_utils/contour.cpp 
-   src/v4r_utils/canny.cpp
-   src/v4r_utils/camera.cpp
-   src/v4r_utils/ellipse_refinement.cpp
+add_library(tuw_utils 
+   src/tuw_utils/contour.cpp 
+   src/tuw_utils/canny.cpp
+   src/tuw_utils/camera.cpp
+   src/tuw_utils/ellipse_refinement.cpp
 )
 
 ## Declare a cpp library
@@ -98,7 +98,7 @@ add_dependencies(tuw_ellipses_nodelet ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(tuw_ellipses_nodelet
-   tuw_ellipses v4r_utils ${catkin_LIBRARIES}
+   tuw_ellipses tuw_utils ${catkin_LIBRARIES}
 )
 target_link_libraries(tuw_ellipses_node
    tuw_ellipses_nodelet ${catkin_LIBRARIES}

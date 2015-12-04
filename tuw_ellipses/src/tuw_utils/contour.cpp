@@ -7,13 +7,13 @@
  *
  * @see
  **/
-#include "v4r_utils/contour.h"
+#include "tuw_utils/contour.h"
 #include <iostream>
 #include <stack>
 #include <cstdio>
 #include "opencv/highgui.h"
 
-namespace V4R {
+namespace tuw {
 
 const int Contour::ANGLE_8U = 8;
 const int Contour::ANGLE_32F = 32;

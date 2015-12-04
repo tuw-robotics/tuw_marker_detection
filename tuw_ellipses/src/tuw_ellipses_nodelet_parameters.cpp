@@ -31,17 +31,17 @@
 #include "tuw_ellipses_nodelet.h"
 #include "tuw_ellipses_nodelet_defaults.h"
 
-using namespace V4R;
+using namespace tuw;
 
 EllipsesDetectionNode::ParametersNode::ParametersNode()
     : Parameters() 
     , node("~")
     , node_name(node.getNamespace())
-    , debug_freeze(V4R_ELLIPSES_NODE_DEFAULT_DEBUG_FREEZE)
-    , show_camera_image(V4R_ELLIPSES_NODE_DEFAULT_SHOW_CAMERA_IMAGE)
-    , show_camera_image_waitkey(V4R_ELLIPSES_NODE_DEFAULT_SHOW_CAMERA_IMAGE_WAITKEY)
-    , image_skip(V4R_ELLIPSES_NODE_DEFAULT_IMAGE_SKIP)
-    , skip_second_tf(V4R_ELLIPSES_NODE_DEFAULT_SKIP_SECOND_TF)
+    , debug_freeze(TUW_ELLIPSES_NODE_DEFAULT_DEBUG_FREEZE)
+    , show_camera_image(TUW_ELLIPSES_NODE_DEFAULT_SHOW_CAMERA_IMAGE)
+    , show_camera_image_waitkey(TUW_ELLIPSES_NODE_DEFAULT_SHOW_CAMERA_IMAGE_WAITKEY)
+    , image_skip(TUW_ELLIPSES_NODE_DEFAULT_IMAGE_SKIP)
+    , skip_second_tf(TUW_ELLIPSES_NODE_DEFAULT_SKIP_SECOND_TF)
     , tf_prefix(node_name)
     {
     node.getParam("debug_freeze", debug_freeze);

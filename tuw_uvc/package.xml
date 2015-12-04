@@ -49,6 +49,7 @@
   <run_depend>camera_info_manager</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>message_runtime</run_depend>
+  <run_depend>libuvc</run_depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
 

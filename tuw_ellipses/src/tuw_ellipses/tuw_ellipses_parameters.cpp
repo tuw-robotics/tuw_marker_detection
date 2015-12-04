@@ -22,7 +22,7 @@
 #include <tuw_ellipses/tuw_ellipses.h>
 #include <tuw_ellipses/tuw_ellipses_defaults.h>
 
-using namespace V4R;
+using namespace tuw;
 
 EllipsesDetection::Parameters::Parameters()
 : debug(V4R_ELLIPSES_DEFAULT_DEBUG)

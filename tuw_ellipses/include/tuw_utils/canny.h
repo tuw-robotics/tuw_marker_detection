@@ -29,9 +29,9 @@
 #ifndef CANNY_H
 #define CANNY_H
 
-namespace V4R {
+namespace tuw {
 
-void v4rCanny( const void* srcarr, void* edgearr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr, double low_thresh, double threshold2, int  aperture_size CV_DEFAULT(3) );
+void tuwCanny( const void* srcarr, void* edgearr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr, double low_thresh, double threshold2, int  aperture_size CV_DEFAULT(3) );
 void Canny( const cv::Mat& image, cv::Mat& edges, cv::Mat& gradient, cv::Mat& direction, cv::Mat& sobel_dx, cv::Mat& sobel_dy, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient=false );
 };
 #endif // CANNY_H

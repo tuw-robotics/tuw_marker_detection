@@ -24,10 +24,10 @@
 #include <tuw_ellipses/tuw_ellipses.h>
 #include <tuw_ellipses/tuw_ellipses_defaults.h>
 #include <boost/foreach.hpp>
-#include "v4r_utils/canny.h"
-#include "v4r_utils/ellipse_refinement.h"
+#include "tuw_utils/canny.h"
+#include "tuw_utils/ellipse_refinement.h"
 
-using namespace V4R;
+using namespace tuw;
 
 
 EllipsesDetection::~EllipsesDetection()
@@ -86,7 +86,7 @@ void EllipsesDetection::edge_detection(const cv::Mat &m) {
         break;
     case EDGE_DETECTION_CANNY:
         cv::blur(imgGray_, imgBlured_, cv::Size(3,3) );
-        V4R::Canny(imgBlured_, imgEdges_, imgGradient_, imgDirection_, imgSobelDx_, imgSobelDy_, param_->threshold_edge_detection1, param_->threshold_edge_detection2, param_->kernel_size_edge_detection);
+        tuw::Canny(imgBlured_, imgEdges_, imgGradient_, imgDirection_, imgSobelDx_, imgSobelDy_, param_->threshold_edge_detection1, param_->threshold_edge_detection2, param_->kernel_size_edge_detection);
         break;
     }
 }
@@ -99,22 +99,22 @@ void EllipsesDetection::contour_detection() {
     case EDGE_LINKING_OPENCV_APPROX_SIMPLE:
         cv::findContours( imgEdges_, contours_, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
         break;
-    case EDGE_LINKING_V4R_SIMPLE:
+    case EDGE_LINKING_TUW_SIMPLE:
         if(param_->edge_detection != EDGE_DETECTION_CANNY) break;
         contour_detector_.Init(imgGray_.cols, imgGray_.rows);
-        contour_detector_.Perform(imgEdges_.data, V4R::Contour::MODE_SIMPLE, imgGradient_.data);
+        contour_detector_.Perform(imgEdges_.data, tuw::Contour::MODE_SIMPLE, imgGradient_.data);
         contour_detector_.getContours(contours_);
         break;
-    case EDGE_LINKING_V4R_COMPLEX:
+    case EDGE_LINKING_TUW_COMPLEX:
         if(param_->edge_detection != EDGE_DETECTION_CANNY) break;
         contour_detector_.Init(imgGray_.cols, imgGray_.rows);
-        contour_detector_.Perform(imgEdges_.data, V4R::Contour::MODE_COMPLEX, imgGradient_.data);
+        contour_detector_.Perform(imgEdges_.data, tuw::Contour::MODE_COMPLEX, imgGradient_.data);
         contour_detector_.getContours(contours_);
         break;
-    case EDGE_LINKING_V4R_CONTOUR:
+    case EDGE_LINKING_TUW_CONTOUR:
         if(param_->edge_detection != EDGE_DETECTION_CANNY) break;
         contour_detector_.Init(imgGray_.cols, imgGray_.rows);
-        contour_detector_.Perform(imgEdges_.data, V4R::Contour::MODE_CONTOUR, imgGradient_.data);
+        contour_detector_.Perform(imgEdges_.data, tuw::Contour::MODE_CONTOUR, imgGradient_.data);
         contour_detector_.getContours(contours_);
         break;
     }
@@ -164,12 +164,12 @@ void EllipsesDetection::fit_ellipses_opencv (const cv::Mat &m, const cv::Mat cam
     }
 }
 
-V4R::EllipseRefinement ellipseRefinementDual;
+tuw::EllipseRefinement ellipseRefinementDual;
 
 EllipsesDetection::DetectionState EllipsesDetection::EllipseRedefinement(Ellipse &ellipse) {
     if(ellipse.detection != VALID) return ellipse.detection;
     
-    V4R::EllipseRefinement::Ellipse e;
+    tuw::EllipseRefinement::Ellipse e;
     e.setEllipse(ellipse.boxEllipse);
     ellipseRefinementDual.refine(imgSobelDx_, imgSobelDy_, *ellipse.contourUndistort, e);
     e.get(ellipse.boxEllipse);  

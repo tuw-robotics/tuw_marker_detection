@@ -24,7 +24,7 @@
 #include <tuw_ellipses/tuw_ellipses_defaults.h>
 #include <boost/foreach.hpp>
 
-using namespace V4R;
+using namespace tuw;
 
 void EllipsesDetection::draw_ellipses(cv::Mat &img) {
     std::vector<cv::Point2f> vtx(4);
