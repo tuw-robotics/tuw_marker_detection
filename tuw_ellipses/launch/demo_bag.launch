@@ -1,0 +1,16 @@
+<launch>
+
+   <!-- laod bag file -->
+  <node pkg="rosbag" type="play" name="player" output="screen" args="--loop --clock --rate 1.0 $(find tuw_ellipses)/bags/2014-02-24-16-28-27.bag"/>
+  
+  <node pkg="image_view" type="image_view" name="image_view" output="screen" >
+    <remap from="image" to="camera/image_raw"/>   		
+  </node>
+
+   <!-- undistore image -->
+  <group ns="camera" > 
+    <node pkg="image_proc" type="image_proc" name="image_proc" />
+  </group>
+
+</launch>
+

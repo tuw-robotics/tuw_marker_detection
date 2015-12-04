@@ -1,0 +1,9 @@
+<launch>
+
+
+   <!-- RVIZ -->
+   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find tuw_ellipses)/launch/rviz/demo.rviz"/>
+
+
+</launch>
+
