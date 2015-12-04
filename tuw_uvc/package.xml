@@ -40,6 +40,8 @@
   <build_depend>image_transport</build_depend>
   <build_depend>camera_info_manager</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>  
+  <build_depend>libv4l-dev</build_depend>
+  <build_depend>libsdl1.2-dev</build_depend>
   <!-- Use buildtool_depend for build tool packages: -->
   <buildtool_depend>catkin</buildtool_depend>
   <!-- Use run_depend for packages you need at runtime: -->
@@ -49,7 +51,8 @@
   <run_depend>camera_info_manager</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>message_runtime</run_depend>
-  <run_depend>libuvc</run_depend>
+  <run_depend>libv4l-dev</run_depend>
+  <run_depend>libsdl1.2-dev</run_depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
 
