@@ -21,8 +21,8 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv/cv.h>
 #include <numeric>      // std::inner_product
-#include <tuw_ellipses/tuw_ellipses.h>
-#include <tuw_ellipses/tuw_ellipses_defaults.h>
+#include <tuw_ellipses/ellipses.h>
+#include <tuw_ellipses/ellipses_defaults.h>
 #include <boost/foreach.hpp>
 #include "tuw_utils/canny.h"
 #include "tuw_utils/ellipse_refinement.h"

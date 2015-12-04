@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 
-#include <tuw_ellipses/tuw_ellipses.h>
-#include <tuw_ellipses/tuw_ellipses_defaults.h>
+#include <tuw_ellipses/ellipses.h>
+#include <tuw_ellipses/ellipses_defaults.h>
 
 using namespace tuw;
 

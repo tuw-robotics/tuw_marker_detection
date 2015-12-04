@@ -28,8 +28,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ***************************************************************************/
 
-#include "tuw_ellipses_nodelet.h"
-#include "tuw_ellipses_nodelet_defaults.h"
+#include "ellipses_nodelet.h"
+#include "ellipses_nodelet_defaults.h"
 
 using namespace tuw;
 

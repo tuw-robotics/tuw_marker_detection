@@ -1,12 +1,8 @@
 <launch>
 
-   <!-- laod bag file -->
-  <node pkg="rosbag" type="play" name="player" output="screen" args="--loop --clock --rate 1.0 $(find tuw_ellipses)/bags/2015-12-04-15-56-30.bag"/>
+   <!-- laod camera -->
+  <include file="$(find tuw_uvc)/launch/general.launch" />
   
-  <node pkg="image_view" type="image_view" name="image_view" output="screen" >
-    <remap from="image" to="camera/image_raw"/>   		
-  </node>
-
    <!-- undistore image 
   <group ns="camera" > 
     <node pkg="image_proc" type="image_proc" name="image_proc" />

@@ -77,29 +77,29 @@ add_library(tuw_utils
 )
 
 ## Declare a cpp library
-add_library(tuw_ellipses
-   src/${PROJECT_NAME}/tuw_ellipses.cpp
-   src/${PROJECT_NAME}/tuw_ellipses_draw.cpp
-   src/${PROJECT_NAME}/tuw_ellipses_parameters.cpp
+add_library(ellipses
+   src/${PROJECT_NAME}/ellipses.cpp
+   src/${PROJECT_NAME}/ellipses_draw.cpp
+   src/${PROJECT_NAME}/ellipses_parameters.cpp
 )
 
-add_library(tuw_ellipses_nodelet
-   src/tuw_ellipses_nodelet.cpp
-   src/tuw_ellipses_nodelet_parameters.cpp
+add_library(ellipses_nodelet
+   src/ellipses_nodelet.cpp
+   src/ellipses_nodelet_parameters.cpp
 )
 
 ## Declare a cpp executable
-add_executable(tuw_ellipses_node src/tuw_ellipses_node.cpp)
+add_executable(ellipses_node src/ellipses_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(tuw_ellipses_node tuw_ellipses_generate_messages_cpp)
-add_dependencies(tuw_ellipses_nodelet ${PROJECT_NAME}_gencfg) 
+add_dependencies(ellipses_nodelet ${PROJECT_NAME}_gencfg) 
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(tuw_ellipses_nodelet
-   tuw_ellipses tuw_utils ${catkin_LIBRARIES}
+target_link_libraries(ellipses_nodelet
+   ellipses tuw_utils ${catkin_LIBRARIES}
 )
-target_link_libraries(tuw_ellipses_node
-   tuw_ellipses_nodelet ${catkin_LIBRARIES}
+target_link_libraries(ellipses_node
+   ellipses_nodelet ${catkin_LIBRARIES}
 )

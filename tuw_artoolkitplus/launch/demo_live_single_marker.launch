@@ -1,7 +1,7 @@
 <launch>
 
    <!-- laod camera -->
-  <include file="$(find v4r_opencv_cam)/launch/laptop.launch" />
+  <include file="$(find tuw_uvc)/launch/general.launch" />
   
    <!-- laod detection -->
   <include file="$(find tuw_artoolkitplus)/launch/single_marker.launch" />
