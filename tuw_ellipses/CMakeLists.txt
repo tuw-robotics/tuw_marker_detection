@@ -95,6 +95,7 @@ add_executable(ellipses_node src/ellipses_node.cpp)
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(tuw_ellipses_node tuw_ellipses_generate_messages_cpp)
 add_dependencies(ellipses_nodelet ${PROJECT_NAME}_gencfg) 
+add_dependencies(ellipses_nodelet ${PROJECT_NAME}_gencpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(ellipses_nodelet
