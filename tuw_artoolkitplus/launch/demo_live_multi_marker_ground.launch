@@ -1,0 +1,14 @@
+<launch>
+  
+   <!-- laod camera -->
+  <include file="$(find tuw_uvc)/launch/logitech_pro_9000.launch">
+	<arg name="device" value="1" />
+  </include>
+  
+   <!-- laod detection -->
+  <include file="$(find tuw_artoolkitplus)/launch/multi_marker.launch">
+	<arg name="pattern" value="ground_0000-0004.cfg" />
+  </include>
+
+</launch>
+

@@ -1,5 +1,7 @@
 <launch>
   
+  <arg name="pattern" default="markerboard_0000-0011.cfg" />
+  
   <!-- laod multi detection -->
   <node pkg="tuw_artoolkitplus" type="artoolkitplus_node" name="arMarker" output="screen">
 
@@ -11,7 +13,7 @@
     
     <param name="tracker_multi_marker" value="true"/>  <!-- using a multi pattern detection  -->
     <param name="pattern_frame" value="pattern"/> <!-- frame name of the multi pattern  -->
-    <param name="pattern_file" value="$(find tuw_artoolkitplus)/cfg/markerboard_0000-0011.cfg"/> <!-- pattern file used  -->
+    <param name="pattern_file" value="$(find tuw_artoolkitplus)/cfg/$(arg pattern)"/> <!-- pattern file used  -->
     
     
     <param name="marker_mode" value="bch"/> <!-- type of marker encoding bch or simple are avaliable -->
