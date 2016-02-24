@@ -28,6 +28,7 @@
 #include <opencv2/opencv.hpp>
 #include <image_transport/image_transport.h>
 #include <image_transport/camera_publisher.h>
+#include <sensor_msgs/SetCameraInfo.h>
 
 /// ROS camera abstraction
 class V4RCamNode : public V4RCam {
@@ -50,8 +51,10 @@ protected:
     sensor_msgs::CameraInfo cameraInfo_;
     sensor_msgs::Image cameraImage_;
     sensor_msgs::Image cameraThumbnail_;
+    ros::ServiceServer  set_camera_info_srv_;
     ros::Subscriber subSphere_;
     void callbackSphere (const tuw_uvc::SphereConstPtr& msg);
+    bool setCameraInfo(sensor_msgs::SetCameraInfoRequest &req, sensor_msgs::SetCameraInfoResponse &rsp);
     bool generate_dynamic_reconfigure_;
     bool show_camera_image_;
     bool camera_freeze_;

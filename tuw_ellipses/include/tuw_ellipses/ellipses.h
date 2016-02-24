@@ -22,8 +22,8 @@
 #include <iostream>
 #include <list>
 
-#ifndef V4R_ELLIPSES_H
-#define V4R_ELLIPSES_H
+#ifndef TUW_ELLIPSES_H
+#define TUW_ELLIPSES_H
 
 #include "opencv/cxcore.h"
 #include "tuw_utils/contour.h"
@@ -188,4 +188,4 @@ protected:
     boost::posix_time::ptime tstampLast_;
 };
 };
-#endif // V4R_ELLIPSES_H
+#endif // TUW_ELLIPSES_H

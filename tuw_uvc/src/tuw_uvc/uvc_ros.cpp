@@ -49,7 +49,8 @@ V4RCamNode::V4RCamNode(ros::NodeHandle &n)
     //n_param_.setParam("show_camera_image", show_camera_image_);
     cameraPublisher_ = imageTransport_.advertiseCamera("image_raw", 1);
     cameraThumbnailPublisher_ = imageTransport_.advertise("image_thumbnail", 1);
-    //subSphere_ = n_.subscribe("sphere", 1000, &V4RCamNode::callbackSphere, this);
+    set_camera_info_srv_ = n_param_.advertiseService("set_camera_info", &V4RCamNode::setCameraInfo, this);
+    //subSphere_ = n_param_.subscribe("sphere", 1000, &V4RCamNode::callbackSphere, this);
     readInitParams();
     initCamera();
     detectControlEnties();
@@ -290,4 +291,24 @@ void V4RCamNode::callbackSphere (const tuw_uvc::SphereConstPtr& msg){
   
     ROS_INFO("action %s, pitch = %4.2f, yaw = %4.2f", msg->action.c_str(), msg->pitch, msg->yaw);
   
+}
+
+
+bool V4RCamNode::setCameraInfo(sensor_msgs::SetCameraInfoRequest &req, sensor_msgs::SetCameraInfoResponse &rsp){
+        ROS_INFO("New camera info received");
+        sensor_msgs::CameraInfo &info = req.camera_info;
+        
+        if (info.width != cameraInfo_.width || info.height != cameraInfo_.height)
+        {
+            rsp.success = false;
+            rsp.status_message = (boost::format("Camera_info resolution %ix%i does not match current video "
+                                                "setting, camera running at resolution %ix%i.")
+                                                 % info.width % info.height % cameraInfo_.width % cameraInfo_.height).str();
+            ROS_ERROR("%s", rsp.status_message.c_str());
+            return true;
+        }
+        
+        cameraInfo_ = info;
+        
+        return true;
 }
