@@ -1,0 +1,10 @@
+<launch>
+
+   <!-- laod camera -->
+  <include file="$(find tuw_uvc)/launch/wide_angle.launch" />
+  
+   <!-- laod detection -->
+  <include file="$(find tuw_artoolkitplus)/launch/single_marker.launch" />
+
+</launch>
+
