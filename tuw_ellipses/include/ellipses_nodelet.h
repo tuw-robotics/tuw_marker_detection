@@ -48,7 +48,7 @@
 namespace tuw {
 
 /// ROS Node
-class EllipsesDetectionNode : public EllipsesDetection , public nodelet::Nodelet {
+class EllipsesDetectionNode : public tuw::EllipsesDetection, public nodelet::Nodelet {
 public:
     struct ParametersNode : public Parameters {
         ParametersNode();

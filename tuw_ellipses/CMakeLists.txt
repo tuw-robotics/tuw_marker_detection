@@ -23,7 +23,7 @@ link_libraries(${OpenCV_LIBS})
 
 find_package(cmake_modules REQUIRED)
 
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 include_directories(${Eigen_INCLUDE_DIRS})
 
 add_message_files(
@@ -55,7 +55,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tuw_ellipses
 #  CATKIN_DEPENDS cv_bridge dynamic_reconfigure image_geometry image_transport roscpp rospy tf
-  DEPENDS eigen opencv
+  DEPENDS eigen3 opencv
 )
 
 ###########
