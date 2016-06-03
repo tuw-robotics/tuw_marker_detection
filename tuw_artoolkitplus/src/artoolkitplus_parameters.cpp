@@ -36,6 +36,9 @@ void ARToolKitPlusNode::Parameter::callbackParameters ( tuw_artoolkitplus::ARPar
   undist_mode = config.undist_mode;
   pose_estimation_mode = config.pose_estimation_mode;
   use_multi_marker_lite_detection = config.use_multi_marker_lite_detection;
+  plausibility_check = config.plausibility_check;
+  plausibility_correction = config.plausibility_correction,
+  multi_marker_freeze_ground_transform = config.multi_marker_freeze_ground_transform;
 }
 
 ARToolKitPlusNode::Parameter::Parameter()

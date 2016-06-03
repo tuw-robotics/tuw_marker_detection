@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-int ARToolKitPlusNode::matrix2Tf(const ARFloat M[3][4], tf::Transform &transform) {
+void ARToolKitPlusNode::matrix2Tf(const ARFloat M[3][4], tf::Transform &transform) {
     tf::Matrix3x3 R(M[0][0], M[0][1], M[0][2], M[1][0], M[1][1], M[1][2], M[2][0], M[2][1], M[2][2]);
     tf::Vector3 T(M[0][3], M[1][3], M[2][3]);
     //transform = tf::Transform(R, T); // this causes a TF to MSG: Quaternion Not Properly Normalized message

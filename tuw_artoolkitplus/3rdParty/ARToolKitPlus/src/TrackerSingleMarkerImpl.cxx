@@ -210,6 +210,17 @@ ARSM_TEMPL_TRACKER::calc(const unsigned char* nImage, int nPattern, bool nUpdate
 	if(nUpdateMatrix)
 	{
 		executeSingleMarkerPoseEstimator(&marker_info[k], patt_center, patt_width, patt_trans);
+		/** Markus Bader
+		 * check if the marker is in front of the camera by flipping if the z value is negative
+		 **/ 
+		
+		if(marker_info[k].id == 1){
+		  printf("%+4.3f, %+4.3f, %+4.3f, %+4.3f\n%+4.3f,%+4.3f, %+4.3f, %+4.3f\n%+4.3f, %+4.3f, %+4.3f, %+4.3f\n\n"
+		    , patt_trans[0][0], patt_trans[0][1], patt_trans[0][2], patt_trans[0][3]
+		    , patt_trans[1][0], patt_trans[1][1], patt_trans[1][2], patt_trans[1][3]
+		    , patt_trans[2][0], patt_trans[2][1], patt_trans[2][2], patt_trans[2][3]);
+		  }
+		  
 		this->convertTransformationMatrixToOpenGLStyle(patt_trans, this->gl_para);
 	}
 

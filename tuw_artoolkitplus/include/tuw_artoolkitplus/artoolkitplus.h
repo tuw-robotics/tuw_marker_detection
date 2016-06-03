@@ -96,6 +96,9 @@ public:
         int undist_iterations;
         int undist_mode;
         int pose_estimation_mode;
+        bool plausibility_check;
+        bool plausibility_correction;
+	bool multi_marker_freeze_ground_transform;
     };
     ARToolKitPlusNode(ros::NodeHandle & n);
     ~ARToolKitPlusNode();
@@ -127,7 +130,7 @@ private:
     void publishTf();
     void publishPerceptions (const std_msgs::Header &header);
     void generateDebugImage(cv::Mat &img);
-    int matrix2Tf(const ARFloat M[3][4], tf::Transform &transform);
+    void matrix2Tf(const ARFloat M[3][4], tf::Transform &transform);
     void readParam();
     void init();
 
