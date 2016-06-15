@@ -46,6 +46,40 @@ void ARToolKitPlusNode::publishTf() {
     }
 }
 
+void ARToolKitPlusNode::publishMarkers(const std_msgs::Header &header) {
+    marker_msgs::MarkerDetection msg;
+
+    msg.header = header;
+    msg.distance_min =  0; //TODO
+    msg.distance_max =  8; //TODO
+    msg.distance_max_id = 5; //TODO
+    msg.view_direction.x = 0; //TODO
+    msg.view_direction.y = 0; //TODO
+    msg.view_direction.z = 0; //TODO
+    msg.view_direction.w = 1; //TODO
+    msg.fov_horizontal = 6; //TODO
+    msg.fov_vertical = 0; //TODO
+
+    msg.markers = marker_msgs::MarkerDetection::_markers_type();
+
+    assert (markerTransforms_.size() == markerTransformsID_.size());
+    std::list<tf::StampedTransform>::iterator it =  markerTransforms_.begin();
+    for(size_t i = 0; i < markerTransforms_.size(); it++, i++) {
+        tf::StampedTransform stf = *it;
+        marker_msgs::Marker marker;
+
+        assert (markerTransformsID_[i]  >= 0);
+        msg.markers[i].ids.resize(1);
+        msg.markers[i].ids_confidence.resize(1);
+        msg.markers[i].ids[0] = markerTransformsID_[i];
+        msg.markers[i].ids_confidence[0] = 1;
+        tf::poseTFToMsg(stf, marker.pose);
+
+        msg.markers.push_back(marker);
+    }
+
+    pub_markers_.publish(msg);
+}
 
 void ARToolKitPlusNode::publishPerceptions (const std_msgs::Header &header) {
     if(pub_perceptions_.getNumSubscribers() < 1) return;

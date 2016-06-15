@@ -39,6 +39,8 @@ void ARToolKitPlusNode::Parameter::callbackParameters ( tuw_artoolkitplus::ARPar
   plausibility_check = config.plausibility_check;
   plausibility_correction = config.plausibility_correction,
   multi_marker_freeze_ground_transform = config.multi_marker_freeze_ground_transform;
+  publish_tf = config.publish_tf;
+  publish_markers = config.publish_markers;
 }
 
 ARToolKitPlusNode::Parameter::Parameter()
@@ -46,7 +48,7 @@ ARToolKitPlusNode::Parameter::Parameter()
     , node_name(node.getNamespace()){
 
     std::string tmp;
-    
+
     node.param<bool>("show_camera_image", show_camera_image_, ARTOOLKITPLUS_DEFAULT_SHOW_CAMERA_IMAGE);
     ROS_INFO("%s: show_camera_image:  %s", node_name.c_str(), ((show_camera_image_) ? "true" : "false"));
 
@@ -66,7 +68,7 @@ ARToolKitPlusNode::Parameter::Parameter()
 
     node.param<bool>("use_multi_marker_lite_detection", use_multi_marker_lite_detection, ARTOOLKITPLUS_DEFAULT_MULIT_MARKER_LITE_DETECTION);
     ROS_INFO("%s: use_multi_marker_lite_detection:  %s", node_name.c_str(), ((use_multi_marker_lite_detection) ? "true" : "false"));
-    
+
     node.param<std::string>("pattern_frame", pattern_frame, ARTOOLKITPLUS_DEFAULT_PATTERN_FRAME);
     ROS_INFO("%s: pattern_frame: %s", node_name.c_str(), pattern_frame.c_str());
 
@@ -134,7 +136,7 @@ ARToolKitPlusNode::Parameter::Parameter()
                   ARTOOLKITPLUS_POSE_ESTIMATION_MODE_CONT, ARTOOLKITPLUS_POSE_ESTIMATION_MODE_RPP);
     }
 
-    
+
     nPattern = -1;
     nUpdateMatrix = true;
     reconfigureFnc_ = boost::bind(&ARToolKitPlusNode::Parameter::callbackParameters, this ,  _1, _2);

@@ -27,6 +27,7 @@
 #include <image_transport/image_transport.h>
 #include <dynamic_reconfigure/server.h>
 #include <tuw_artoolkitplus/ARParamConfig.h>
+#include <marker_msgs/MarkerDetection.h>
 
 #include <list>
 #include <opencv/cv.h>
@@ -98,6 +99,8 @@ public:
         int pose_estimation_mode;
         bool plausibility_check;
         bool plausibility_correction;
+        bool publish_tf;
+        bool publish_markers;
 	bool multi_marker_freeze_ground_transform;
     };
     ARToolKitPlusNode(ros::NodeHandle & n);
@@ -112,15 +115,17 @@ private:
     boost::shared_ptr<ARToolKitPlus::TrackerSingleMarker> trackerSingleMarker_;
     boost::shared_ptr<ARToolKitPlus::TrackerMultiMarker> trackerMultiMarker_;
     std::vector<ARToolKitPlus::ARTag2D> arTags2D_;
-    std::list<tf::StampedTransform> markerTransforms_;    
+    std::list<tf::StampedTransform> markerTransforms_;
+    std::vector<int> markerTransformsID_;
     const ARToolKitPlus::ARMultiMarkerInfoT *arMultiMarkerInfo_;
     MyLogger *logger_;
     Parameter param_;
     ros::Publisher pub_perceptions_;
+    ros::Publisher pub_markers_;
 
     void initTrackerSingleMarker(const sensor_msgs::CameraInfoConstPtr& camer_info_);
     void initTrackerMultiMarker(const sensor_msgs::CameraInfoConstPtr& camer_info_);
-    
+
     void updateParameterTrackerSingleMarker(const sensor_msgs::CameraInfoConstPtr& camer_info);
     void updateParameterTrackerMultiMarker(const sensor_msgs::CameraInfoConstPtr& camer_info);
 
@@ -128,6 +133,7 @@ private:
                        const sensor_msgs::CameraInfoConstPtr& info_msg);
     void estimatePoses(const std_msgs::Header &header);
     void publishTf();
+    void publishMarkers(const std_msgs::Header &header);
     void publishPerceptions (const std_msgs::Header &header);
     void generateDebugImage(cv::Mat &img);
     void matrix2Tf(const ARFloat M[3][4], tf::Transform &transform);

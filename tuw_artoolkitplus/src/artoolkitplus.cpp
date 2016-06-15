@@ -43,6 +43,7 @@ ARToolKitPlusNode::ARToolKitPlusNode ( ros::NodeHandle & n ) :
     n_ ( n ), n_param_ ( "~" ), callback_counter_ ( 0 ), imageTransport_ ( n_ ),  logger_ ( NULL ), param_() {
 
     init();
+    pub_markers_ =  n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
     cameraSubscriber_ = imageTransport_.subscribeCamera ( ARTOOLKITPLUS_IMAGE_SRC, 1, &ARToolKitPlusNode::imageCallback, this );
 }
 
@@ -317,6 +318,7 @@ void ARToolKitPlusNode::estimatePoses ( const std_msgs::Header &header ) {
     tf::StampedTransform st;
     char frame[0xFF];
     markerTransforms_.clear();
+    markerTransformsID_.clear();
 
     if ( trackerMultiMarker_ ) {
 
@@ -332,6 +334,7 @@ void ARToolKitPlusNode::estimatePoses ( const std_msgs::Header &header ) {
             std::string child_frame = tf::resolve ( param_.tf_prefix, param_.pattern_frame );
             st = tf::StampedTransform ( trans, header.stamp, header.frame_id, child_frame );
             markerTransforms_.push_back ( st );
+            markerTransformsID_.push_back(-1);
         }
     }
     for ( std::vector<ARToolKitPlus::ARTag2D>::iterator arTag =  arTags2D_.begin(); arTag != arTags2D_.end(); arTag++ ) {
@@ -342,19 +345,32 @@ void ARToolKitPlusNode::estimatePoses ( const std_msgs::Header &header ) {
         sprintf ( frame, "t%i", arTag->id );
         if ( trackerMultiMarker_ ) trackerMultiMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.patternWidth, pose );
         if ( trackerSingleMarker_ ) trackerSingleMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.patternWidth, pose );
-        matrix2Tf ( pose, trans );
-	/// @ToDo Fix
+        sprintf ( frame, "t%i", arTag->id );
+        std::string child_frame = tf::resolve ( param_.tf_prefix, frame );
+
         if ( param_.plausibility_check ) {
-            if ( pose[2][3] < 0 ) {
+            double roll, pitch, yaw, z;
+            tf::Matrix3x3 R(pose[0][0], pose[0][1], pose[0][2],
+                            pose[1][0], pose[1][1], pose[1][2],
+                            pose[2][0], pose[2][1], pose[2][2]);
+
+            R.getRPY(roll, pitch, yaw);
+            z = pose[2][3];
+
+            if (std::isnan(roll) || std::isnan(pitch) || std::isnan(yaw))
+                continue;
+
+            if ( z < 0.0001 ) {
                 if ( param_.plausibility_correction ) {
-                } else {
-		  //printf("%i corrected", arTag->id);
-                }
+                    // TODO: add plausibility correction
+                } else continue;
             }
         }
-        std::string child_frame = tf::resolve ( param_.tf_prefix, frame );
+
+        matrix2Tf ( pose, trans );
         st = tf::StampedTransform ( trans, header.stamp, header.frame_id, child_frame );
         markerTransforms_.push_back ( st );
+        markerTransformsID_.push_back(arTag->id);
     }
 }
 
