@@ -69,10 +69,10 @@ void ARToolKitPlusNode::publishMarkers(const std_msgs::Header &header) {
         marker_msgs::Marker marker;
 
         assert (markerTransformsID_[i]  >= 0);
-        msg.markers[i].ids.resize(1);
-        msg.markers[i].ids_confidence.resize(1);
-        msg.markers[i].ids[0] = markerTransformsID_[i];
-        msg.markers[i].ids_confidence[0] = 1;
+        marker.ids.resize(1);
+        marker.ids_confidence.resize(1);
+        marker.ids[0] = markerTransformsID_[i];
+        marker.ids_confidence[0] = 1;
         tf::poseTFToMsg(stf, marker.pose);
 
         msg.markers.push_back(marker);

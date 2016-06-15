@@ -297,7 +297,8 @@ void ARToolKitPlusNode::imageCallback ( const sensor_msgs::ImageConstPtr& image_
 
     estimatePoses ( image_msg->header );
 
-    publishTf();
+    if ( param_.publish_tf ) publishTf();
+    if ( param_.publish_markers ) publishMarkers( image_msg->header );
 
     if ( param_.show_camera_image_ ) {
         cv::Mat img_debug;
