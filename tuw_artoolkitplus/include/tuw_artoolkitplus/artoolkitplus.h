@@ -30,7 +30,7 @@
 #include <marker_msgs/MarkerDetection.h>
 
 #include <list>
-#include <opencv/cv.h>
+#include <opencv2/core/core.hpp>
 #include "ARToolKitPlus/ar.h"
 #include "ARToolKitPlus/arMulti.h"
 

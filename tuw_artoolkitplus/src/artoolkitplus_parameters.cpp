@@ -20,7 +20,6 @@
 
 #include <tuw_artoolkitplus/artoolkitplus.h>
 #include <tuw_artoolkitplus/artoolkitplus_defaults.h>
-
 #include <ARToolKitPlus/ARToolKitPlus.h>
 
 
