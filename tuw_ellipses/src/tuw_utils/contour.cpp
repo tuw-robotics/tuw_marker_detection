@@ -11,7 +11,6 @@
 #include <iostream>
 #include <stack>
 #include <cstdio>
-#include "opencv/highgui.h"
 
 namespace tuw {
 
@@ -270,7 +269,7 @@ void Contour::Perform ( unsigned char* pImgEdgeStrength, int defEdgeLinkMode, vo
 
 
 void Contour::Linking_Simple() {
-    CvPoint tPoint = {0,0};
+    CvPoint tPoint = cvPoint(0,0);
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -400,7 +399,7 @@ void Contour::Trace_Simple ( CvPoint tPoint, int *pEnd ) {
 }
 
 void Contour::Linking_Contour() {
-    CvPoint tPoint = {0,0};
+    CvPoint tPoint = cvPoint(0,0);
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -486,7 +485,7 @@ void Contour::Trace_Contour ( CvPoint tPoint, int *pEnd, unsigned int iCommingFr
 
 
 void Contour::Linking_Gradient() {
-    CvPoint tPoint = {0,0};
+    CvPoint tPoint = cvPoint(0,0);;
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -505,8 +504,8 @@ void Contour::Linking_Gradient() {
 
 void Contour::Trace_Gradient ( CvPoint tPoint, int *pEnd ) {
     if (isInImage(tPoint)) {
-        CvPoint tCurrent = {0,0};
-        CvPoint tNext = {0,0};
+        CvPoint tCurrent = cvPoint(0,0);;
+        CvPoint tNext = cvPoint(0,0);;
         bool bRemove = false;
         unsigned char *pNeighbor;
         int iEdgeDirection;
@@ -543,7 +542,7 @@ void Contour::Trace_Gradient ( CvPoint tPoint, int *pEnd ) {
 
 
 void Contour::Linking_Complex() {
-    CvPoint tPoint = {0,0};
+    CvPoint tPoint = cvPoint(0,0);;
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -563,7 +562,7 @@ void Contour::Linking_Complex() {
 void Contour::Trace_Complex ( CvPoint tPoint, int *pEnd, unsigned int iCommingFromEdge ) {
     if (isInImage(tPoint)) {
         CvPoint tCurrent;
-        CvPoint tNext = {0,0};;
+        CvPoint tNext = cvPoint(0,0);;
         bool bRemove = false;
         unsigned char *pNeighbor = NULL;
         unsigned int iGointToEdge = 0;

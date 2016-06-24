@@ -39,7 +39,9 @@
 //
 //M*/
 
-#include "opencv/cv.h"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/internal.hpp>
 
 namespace tuw {
 CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr,

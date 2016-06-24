@@ -55,7 +55,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tuw_ellipses
 #  CATKIN_DEPENDS cv_bridge dynamic_reconfigure image_geometry image_transport roscpp rospy tf
-  DEPENDS eigen3 opencv
+  DEPENDS eigen3 OpenCV
 )
 
 ###########
@@ -78,7 +78,7 @@ add_library(tuw_utils
 
 ## Declare a cpp library
 add_library(ellipses
-   src/${PROJECT_NAME}/ellipses.cpp
+   src/${PROJECT_NAME}/ellipses_detection.cpp
    src/${PROJECT_NAME}/ellipses_draw.cpp
    src/${PROJECT_NAME}/ellipses_parameters.cpp
 )

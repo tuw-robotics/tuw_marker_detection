@@ -43,7 +43,6 @@
 
   <run_depend>tuw_artoolkitplus</run_depend>
   <run_depend>tuw_ellipses</run_depend>
-  <run_depend>tuw_uvc</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -13,7 +13,7 @@
 #include <vector>
 #include <valarray>
 
-#include <opencv/cv.h>
+#include <opencv2/core/core.hpp>
 
 namespace tuw {
 

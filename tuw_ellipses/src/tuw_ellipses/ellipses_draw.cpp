@@ -18,9 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv/cv.h>
-#include <tuw_ellipses/ellipses.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <tuw_ellipses/ellipses_detection.h>
 #include <tuw_ellipses/ellipses_defaults.h>
 #include <boost/foreach.hpp>
 

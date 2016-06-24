@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 
-#include <tuw_ellipses/ellipses.h>
+#include <tuw_ellipses/ellipses_detection.h>
 #include <tuw_ellipses/ellipses_defaults.h>
 
 using namespace tuw;

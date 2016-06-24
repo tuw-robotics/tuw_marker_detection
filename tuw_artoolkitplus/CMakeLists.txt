@@ -4,7 +4,7 @@ project(tuw_artoolkitplus)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp rospy image_geometry image_transport tf cv_bridge dynamic_reconfigure message_generation geometry_msgs marker_msgs )
+find_package(catkin REQUIRED roscpp rospy image_geometry image_transport tf cv_bridge dynamic_reconfigure message_generation geometry_msgs marker_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -47,10 +47,10 @@ generate_dynamic_reconfigure_options(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES tuw_artoolkitplus
 #  CATKIN_DEPENDS other_catkin_pkg
-  DEPENDS message_runtime geometry_msgs
+  DEPENDS message_runtime geometry_msgs OpenCV
 )
 
 ###########
@@ -98,5 +98,6 @@ add_dependencies(artoolkitplus_node ${PROJECT_NAME}_gencpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(artoolkitplus_node
   ARToolKitPlus 
+  ${OpenCV_LIBS}
   ${catkin_LIBRARIES}
 )

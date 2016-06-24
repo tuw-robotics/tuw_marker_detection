@@ -29,10 +29,9 @@
  ***************************************************************************/
 #include "ellipses_nodelet.h"
 #include <iomanip>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 #include <sensor_msgs/image_encodings.h>
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <image_geometry/pinhole_camera_model.h>
 #include <tuw_ellipses/TransformArrayStamped.h>
 

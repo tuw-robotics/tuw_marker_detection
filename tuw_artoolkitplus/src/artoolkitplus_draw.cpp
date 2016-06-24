@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include <tuw_artoolkitplus/artoolkitplus.h>
+#include <opencv2/core/core.hpp>
+#include <opencv/cv.hpp>
 
 void ARToolKitPlusNode::generateDebugImage(cv::Mat &img) {
     char text[0xFF];

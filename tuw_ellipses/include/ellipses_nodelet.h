@@ -42,7 +42,7 @@
 #include <tuw_ellipses/EllipsesDetectionConfig.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <tf/transform_broadcaster.h>
-#include <tuw_ellipses/ellipses.h>
+#include <tuw_ellipses/ellipses_detection.h>
 #include <tuw_ellipses/markers.h>
 
 namespace tuw {

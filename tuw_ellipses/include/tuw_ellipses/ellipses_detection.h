@@ -25,7 +25,7 @@
 #ifndef TUW_ELLIPSES_H
 #define TUW_ELLIPSES_H
 
-#include "opencv/cxcore.h"
+#include "opencv2/core/core.hpp"
 #include "tuw_utils/contour.h"
 #include "tuw_utils/camera.h"
 #include "boost/shared_ptr.hpp"
