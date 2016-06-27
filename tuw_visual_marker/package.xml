@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>tuw_visual_marker</name>
+  <name>tuw_marker_detection</name>
   <version>0.0.0</version>
-  <description>The tuw_visual_marker package</description>
+  <description>The tuw_marker_detection package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
