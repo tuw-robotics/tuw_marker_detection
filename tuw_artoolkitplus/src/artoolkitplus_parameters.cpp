@@ -24,32 +24,13 @@
 
 
 
-void ARToolKitPlusNode::Parameter::callbackParameters ( tuw_artoolkitplus::ARParamConfig &config, uint32_t level ) {
-  show_camera_image_ = config.show_camera_image;
-  distorted_input = config.distorted_input;
-  skip_frames = config.skip_frames;
-  useBCH = config.useBCH;
-  borderWidth = config.borderWidth;
-  patternWidth = config.patternWidth;
-  edge_threshold = config.edge_threshold;
-  undist_mode = config.undist_mode;
-  pose_estimation_mode = config.pose_estimation_mode;
-  use_multi_marker_lite_detection = config.use_multi_marker_lite_detection;
-  plausibility_check = config.plausibility_check;
-  plausibility_correction = config.plausibility_correction,
-  multi_marker_freeze_ground_transform = config.multi_marker_freeze_ground_transform;
-  publish_tf = config.publish_tf;
-  publish_markers = config.publish_markers;
-}
+void ARToolKitPlusNode::Parameter::read_param(ros::NodeHandle &node){
 
-ARToolKitPlusNode::Parameter::Parameter()
-    : node("~") 
-    , node_name(node.getNamespace()){
-
+    node_name = node.getNamespace();
     std::string tmp;
 
-    node.param<bool>("show_camera_image", show_camera_image_, ARTOOLKITPLUS_DEFAULT_SHOW_CAMERA_IMAGE);
-    ROS_INFO("%s: show_camera_image:  %s", node_name.c_str(), ((show_camera_image_) ? "true" : "false"));
+    node.param<bool>("show_camera_image", show_camera_image, ARTOOLKITPLUS_DEFAULT_SHOW_CAMERA_IMAGE);
+    ROS_INFO("%s: show_camera_image:  %s", node_name.c_str(), ((show_camera_image) ? "true" : "false"));
 
     node.param<int>("skip_frames", skip_frames, ARTOOLKITPLUS_DEFAULT_SKIP_FRAMES);
     ROS_INFO("%s: skip_frames: %i", node_name.c_str(), skip_frames);
@@ -92,14 +73,14 @@ ARToolKitPlusNode::Parameter::Parameter()
         ROS_ERROR("%s: marker_mode:  %s does not match any known type use %s or %s", node_name.c_str(), tmp.c_str(), ARTOOLKITPLUS_MARKER_MODE_SIMPEL, ARTOOLKITPLUS_MARKER_MODE_BCH);
     }
 
-    node.param<double>("pattern_width", patternWidth, ARTOOLKITPLUS_DEFAULT_PATTERN_WITH);
-    ROS_INFO("%s: pattern_width: %4.3f [m] only for single marker", node_name.c_str(), patternWidth);
+    node.param<double>("pattern_width", pattern_width, ARTOOLKITPLUS_DEFAULT_PATTERN_WITH);
+    ROS_INFO("%s: pattern_width: %4.3f [m] only for single marker", node_name.c_str(), pattern_width);
 
     node.param<int>("edge_threshold", edge_threshold, ARTOOLKITPLUS_DEFAULT_THRESHOLD);
     ROS_INFO("%s: edge_threshold: %i, (0 = auto edge_threshold)", node_name.c_str(), edge_threshold);
 
-    node.param<double>("border_width", borderWidth, ARTOOLKITPLUS_DEFAULT_BOARDER_WIDTH);
-    ROS_INFO("%s: border_width: %4.3f, (0 = auto border_width)", node_name.c_str(), borderWidth);
+    node.param<double>("border_width", pattern_width, ARTOOLKITPLUS_DEFAULT_BOARDER_WIDTH);
+    ROS_INFO("%s: border_width: %4.3f, (0 = auto border_width)", node_name.c_str(), pattern_width);
 
     node.param<int>("undist_iterations", undist_iterations, ARTOOLKITPLUS_DEFAULT_UNDIST_INTERATIONS);
     ROS_INFO("%s: undist_iterations: %i", node_name.c_str(), undist_iterations);
@@ -138,7 +119,5 @@ ARToolKitPlusNode::Parameter::Parameter()
 
     nPattern = -1;
     nUpdateMatrix = true;
-    reconfigureFnc_ = boost::bind(&ARToolKitPlusNode::Parameter::callbackParameters, this ,  _1, _2);
-    reconfigureServer_.setCallback(reconfigureFnc_);
 }
 

@@ -102,3 +102,7 @@ void ARToolKitPlusNode::publishPerceptions (const std_msgs::Header &header) {
     }
 }
 
+void ARToolKitPlusNode::callbackParameters ( tuw_artoolkitplus::ARParamConfig &config, uint32_t level ) {
+  ((tuw_artoolkitplus::ARParamConfig&) param_) = config;
+}
+

@@ -70,38 +70,19 @@ class MyLogger;
 
 class ARToolKitPlusNode {
 public:
-    class Parameter {
+    class Parameter : public tuw_artoolkitplus::ARParamConfig{
     public:
-        Parameter();
+	void read_param(ros::NodeHandle &n);
         void update(const unsigned long &counter);
-        void callbackParameters ( tuw_artoolkitplus::ARParamConfig &config, uint32_t level );
-        ros::NodeHandle node;
-        dynamic_reconfigure::Server<tuw_artoolkitplus::ARParamConfig> reconfigureServer_;
-        dynamic_reconfigure::Server<tuw_artoolkitplus::ARParamConfig>::CallbackType reconfigureFnc_;
-        bool show_camera_image_;
-        int skip_frames;
         std::string node_name;
         std::string tf_prefix;
         std::string pattern_frame;
         std::string pattern_file;
-        bool useBCH; // simple-id versus BCH-id markers
-        double patternWidth;  // define size of the marker
-        double borderWidth;
-        int edge_threshold;
         int nPattern;
         bool nUpdateMatrix;
         bool tracker_single_marker;
         bool tracker_multi_marker;
-        bool use_multi_marker_lite_detection;
-        bool distorted_input;
         int undist_iterations;
-        int undist_mode;
-        int pose_estimation_mode;
-        bool plausibility_check;
-        bool plausibility_correction;
-        bool publish_tf;
-        bool publish_markers;
-	bool multi_marker_freeze_ground_transform;
     };
     ARToolKitPlusNode(ros::NodeHandle & n);
     ~ARToolKitPlusNode();
@@ -139,6 +120,10 @@ private:
     void matrix2Tf(const ARFloat M[3][4], tf::Transform &transform);
     void readParam();
     void init();
+        
+    void callbackParameters ( tuw_artoolkitplus::ARParamConfig &config, uint32_t level );
+    dynamic_reconfigure::Server<tuw_artoolkitplus::ARParamConfig> reconfigureServer_;
+    dynamic_reconfigure::Server<tuw_artoolkitplus::ARParamConfig>::CallbackType reconfigureFnc_;
 
 };
 

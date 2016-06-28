@@ -15,7 +15,7 @@
     
     
     <param name="marker_mode" value="bch"/> <!-- type of marker encoding bch or simple are avaliable -->
-    <param name="pattern_width" value="0.1"/> <!-- marker size in meter -->
+    <param name="pattern_width" value="0.02"/> <!-- marker size in meter -->
     <param name="threshold" value="0"/>  <!-- threshold for marker detection, 0 means auto  -->
     <param name="border_width" value="0"/> <!-- inner border to the encoding, 0 means auto  -->
     <param name="undist_iterations" value="10"/>  <!-- number of interation to undistore a corner  -->

@@ -45,6 +45,10 @@ ARToolKitPlusNode::ARToolKitPlusNode ( ros::NodeHandle & n ) :
     init();
     pub_markers_ =  n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
     cameraSubscriber_ = imageTransport_.subscribeCamera ( ARTOOLKITPLUS_IMAGE_SRC, 1, &ARToolKitPlusNode::imageCallback, this );
+    
+    param_.read_param(n_param_);
+    reconfigureFnc_ = boost::bind(&ARToolKitPlusNode::callbackParameters, this ,  _1, _2);
+    reconfigureServer_.setCallback(reconfigureFnc_);
 }
 
 
@@ -172,11 +176,11 @@ void ARToolKitPlusNode::updateParameterTrackerSingleMarker ( const sensor_msgs::
     }
 
 // define size of the marker
-    trackerSingleMarker_->setPatternWidth ( param_.patternWidth );
+    trackerSingleMarker_->setPatternWidth ( param_.pattern_width );
 
 // the marker in the BCH test image has a thin border...
-    if ( param_.borderWidth > 0 ) {
-        trackerSingleMarker_->setBorderWidth ( param_.borderWidth );
+    if ( param_.border_width > 0 ) {
+        trackerSingleMarker_->setBorderWidth ( param_.border_width );
     } else {
         trackerSingleMarker_->setBorderWidth ( param_.useBCH ? 0.125f : 0.250f );
     }
@@ -216,8 +220,8 @@ void ARToolKitPlusNode::updateParameterTrackerMultiMarker ( const sensor_msgs::C
     trackerMultiMarker_->setUseDetectLite ( param_.use_multi_marker_lite_detection );
 
 // the marker in the BCH test image has a thin border...
-    if ( param_.borderWidth > 0 ) {
-        trackerMultiMarker_->setBorderWidth ( param_.borderWidth );
+    if ( param_.border_width > 0 ) {
+        trackerMultiMarker_->setBorderWidth ( param_.border_width );
     } else {
         trackerMultiMarker_->setBorderWidth ( param_.useBCH ? 0.125f : 0.250f );
     }
@@ -300,7 +304,7 @@ void ARToolKitPlusNode::imageCallback ( const sensor_msgs::ImageConstPtr& image_
     if ( param_.publish_tf ) publishTf();
     if ( param_.publish_markers ) publishMarkers( image_msg->header );
 
-    if ( param_.show_camera_image_ ) {
+    if ( param_.show_camera_image ) {
         cv::Mat img_debug;
         cvtColor ( img->image, img_debug, CV_GRAY2BGR );
         generateDebugImage ( img_debug );
@@ -344,8 +348,8 @@ void ARToolKitPlusNode::estimatePoses ( const std_msgs::Header &header ) {
         if ( arTag->belongsToPattern != ARToolKitPlus::ARTag2D::NO_PATTERN )
             continue;
         sprintf ( frame, "t%i", arTag->id );
-        if ( trackerMultiMarker_ ) trackerMultiMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.patternWidth, pose );
-        if ( trackerSingleMarker_ ) trackerSingleMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.patternWidth, pose );
+        if ( trackerMultiMarker_ ) trackerMultiMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.pattern_width, pose );
+        if ( trackerSingleMarker_ ) trackerSingleMarker_->executeSingleMarkerPoseEstimator ( & ( *arTag ), center, param_.pattern_width, pose );
         sprintf ( frame, "t%i", arTag->id );
         std::string child_frame = tf::resolve ( param_.tf_prefix, frame );
 
@@ -376,7 +380,7 @@ void ARToolKitPlusNode::estimatePoses ( const std_msgs::Header &header ) {
 }
 
 void ARToolKitPlusNode::init() {
-    if ( param_.show_camera_image_ ) {
+    if ( param_.show_camera_image ) {
         cv::namedWindow ( param_.node_name + std::string ( " - debug" ), 1 );
     }
 }
