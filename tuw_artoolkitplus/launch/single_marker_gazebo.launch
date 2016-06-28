@@ -23,7 +23,7 @@
       <param name="undist_iterations" value="10"/>  <!-- number of interation to undistore a corner  -->
       <param name="distorted_input" value="false"/>  <!-- true if you are working with distorted raw images, false if the image is undistorted  -->
       <param name="undist_mode" value="std"/>  <!-- undistor modes: none, std or lut (luz only works up to 1024x1024 -->
-      <param name="pose_estimation_mode" value="rpp"/>  <!-- pose estimation modes: normal, cont or rpp -->
+      <param name="pose_estimation_mode" value="cont"/>  <!-- pose estimation modes: normal, cont or rpp -->
       
       <remap from="image" to="$(arg camera)/$(arg image)"/>
       <remap from="camera_info" to="$(arg camera)/camera_info"/>   
