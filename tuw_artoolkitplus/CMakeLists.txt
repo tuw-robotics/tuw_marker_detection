@@ -98,6 +98,6 @@ add_dependencies(artoolkitplus_node ${PROJECT_NAME}_gencpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(artoolkitplus_node
   ARToolKitPlus 
-  ${OpenCV_LIBS}
+  ${OpenCV_LIBRARIES}
   ${catkin_LIBRARIES}
 )
