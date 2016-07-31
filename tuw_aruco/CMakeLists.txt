@@ -8,10 +8,15 @@ find_package(catkin REQUIRED
     roscpp
     rospy
     std_msgs
+    image_geometry
+    image_transport
+    tf
+    cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package( OpenCV REQUIRED )
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -100,12 +105,11 @@ find_package(catkin REQUIRED
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tuw_aruco
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+    # INCLUDE_DIRS include
+    #  LIBRARIES tuw_artoolkitplus
+    #  CATKIN_DEPENDS other_catkin_pkg
+    DEPENDS OpenCV
 )
-
 ###########
 ## Build ##
 ###########
@@ -138,6 +142,7 @@ add_executable(aruco_node src/aruco_node.cpp)
 # )
 target_link_libraries(aruco_node
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )
 
 #############
