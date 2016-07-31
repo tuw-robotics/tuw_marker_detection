@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tuw_aruco)
 
+set("ARUCO_LIB_DIR" "aruco-2.0.10/")
+
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -19,7 +23,7 @@ find_package(catkin REQUIRED
 find_package( OpenCV REQUIRED )
 
 # Build aruco library with CMake
-add_subdirectory("aruco-2.0.10/")
+add_subdirectory(${ARUCO_LIB_DIR})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -118,7 +122,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${ARUCO_LIB_DIR}src/)
 
 ## Declare a C++ library
 # add_library(tuw_aruco
