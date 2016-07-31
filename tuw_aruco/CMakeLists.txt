@@ -4,7 +4,11 @@ project(tuw_aruco)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+    roscpp
+    rospy
+    std_msgs
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -108,7 +112,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(tuw_aruco
@@ -122,6 +126,7 @@ catkin_package(
 
 ## Declare a C++ executable
 # add_executable(tuw_aruco_node src/tuw_aruco_node.cpp)
+add_executable(aruco_node src/aruco_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -131,6 +136,9 @@ catkin_package(
 # target_link_libraries(tuw_aruco_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(aruco_node
+    ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
