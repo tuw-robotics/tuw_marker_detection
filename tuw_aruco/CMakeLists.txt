@@ -18,6 +18,8 @@ find_package(catkin REQUIRED
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package( OpenCV REQUIRED )
 
+# Build aruco library with CMake
+add_subdirectory("aruco-2.0.10/")
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -143,6 +145,7 @@ add_executable(aruco_node src/aruco_node.cpp)
 target_link_libraries(aruco_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
+    aruco
 )
 
 #############
