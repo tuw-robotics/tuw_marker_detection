@@ -16,6 +16,7 @@ find_package(catkin REQUIRED
     image_transport
     tf
     cv_bridge
+    marker_msgs
 )
 
 ## System dependencies are found with CMake's conventions

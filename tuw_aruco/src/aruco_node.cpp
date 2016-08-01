@@ -13,6 +13,9 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : _n(n), _imageTransport(n) {
     _detector.setThresholdParams(7, 7);
     _detector.setThresholdParamRange(2, 0);
 
+    // Advert marker publisher
+    _pub_markers = _n.advertise<marker_msgs::MarkerDetection>("markers", 10);
+
     // Subscribe to image topic
     _cameraSubscriber = _imageTransport.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
 
@@ -33,6 +36,44 @@ static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::C
     cv::Mat distortion_coefficients = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
 
     return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camer_info->width, camer_info->height));
+}
+
+void ArUcoNode::publishMarkers(const std_msgs::Header &header) {
+    marker_msgs::MarkerDetection msg;
+
+    msg.header = header;
+    msg.distance_min =  0; //TODO
+    msg.distance_max =  8; //TODO
+    msg.distance_max_id = 5; //TODO
+    msg.view_direction.x = 0; //TODO
+    msg.view_direction.y = 0; //TODO
+    msg.view_direction.z = 0; //TODO
+    msg.view_direction.w = 1; //TODO
+    msg.fov_horizontal = 6; //TODO
+    msg.fov_vertical = 0; //TODO
+
+    msg.markers = marker_msgs::MarkerDetection::_markers_type();
+
+    for(std::list<tf::StampedTransform>::iterator it =  _markerTransforms.begin(); it != _markerTransforms.end(); it++) {
+        tf::StampedTransform stf = *it;
+
+        // Send transform
+        _transformBroadcaster.sendTransform(stf);
+
+        // Push marker into MarkerDetection message
+        marker_msgs::Marker marker;
+
+        marker.ids.resize(1);
+        marker.ids_confidence.resize(1);
+        marker.ids[0] = 0; // markerTransformsID_[i]; -- TODO: Fix me, marker id missing
+        marker.ids_confidence[0] = 1;
+        tf::poseTFToMsg(stf, marker.pose);
+
+        msg.markers.push_back(marker);
+    }
+
+    // Publish MarkerDetection message
+    _pub_markers.publish(msg);
 }
 
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
@@ -75,10 +116,8 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
             }
         }
 
-        // Broadcast transforms
-        for(std::list<tf::StampedTransform>::iterator it =  _markerTransforms.begin(); it != _markerTransforms.end(); it++) {
-            _transformBroadcaster.sendTransform(*it);
-        }
+        // Broadcast markers and transforms
+        publishMarkers(image_msg->header);
 
         // Draw markers
         cv::Mat debugImage = cv::Mat::zeros(640, 480, CV_8UC3);
