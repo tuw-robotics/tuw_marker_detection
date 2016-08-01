@@ -13,16 +13,6 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : _n(n), _imageTransport(n) {
     _detector.setThresholdParams(7, 7);
     _detector.setThresholdParamRange(2, 0);
 
-
-    // Camera parameters
-    float camera_matrix_data[9] = {844.196880, 0.000000, 318.514635, 0.000000, 852.683290, 254.889584, 0.000000, 0.000000, 1.000000};
-    cv::Mat camera_matrix = cv::Mat(3, 3, CV_32F, camera_matrix_data);
-
-    float distortion_coefficients_data[5] = {0.130185, -0.499155, -0.009280, -0.003387, 0.000000};
-    cv::Mat distortion_coefficients = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
-
-    _camParams = aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(640, 480));
-
     // Subscribe to image topic
     _cameraSubscriber = _imageTransport.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
 
@@ -31,11 +21,27 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : _n(n), _imageTransport(n) {
 
 ArUcoNode::~ArUcoNode() {}
 
+static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::CameraInfoConstPtr &camer_info){
+    float camera_matrix_data[9];
+    for(int i = 0; i < 9; i++)
+        camera_matrix_data[i] = camer_info->K[i];
+    cv::Mat camera_matrix = cv::Mat(3, 3, CV_32F, camera_matrix_data);
+
+    float distortion_coefficients_data[5];
+    for(int i = 0; i < 5; i++)
+        distortion_coefficients_data[i] = camer_info->D[i];
+    cv::Mat distortion_coefficients = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
+
+    return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camer_info->width, camer_info->height));
+}
+
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
     cv_bridge::CvImagePtr img;
     try {
         img = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::MONO8);
 
+        // Convert ros camera parameter
+        aruco::CameraParameters camParams = cameraInfoToCameraParameters(camer_info_);
 
         // Detect markers
         vector< aruco::Marker > markers;
@@ -47,7 +53,7 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
         tf::StampedTransform st;
         for (auto &marker:markers) {
 
-            bool success = _tracker[marker.id].estimatePose(marker, _camParams, 0.06f); //call its tracker and estimate the pose
+            bool success = _tracker[marker.id].estimatePose(marker, camParams, 0.06f); //call its tracker and estimate the pose
             if(success){
                 cv::Mat m = _tracker[marker.id].getRTMatrix();
 
@@ -83,8 +89,8 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
             markers[i].draw(debugImage, cv::Scalar(0, 0, 255), 1);
 
             // draw a 3d cube
-            aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], _camParams);
-            aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], _camParams);
+            aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], camParams);
+            aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], camParams);
         }
 
         cv::imshow("aruco_node_debug", debugImage);

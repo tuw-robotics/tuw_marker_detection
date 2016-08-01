@@ -25,7 +25,6 @@ private:
 
     aruco::MarkerDetector _detector;
     std::map<uint32_t, aruco::MarkerPoseTracker> _tracker;
-    aruco::CameraParameters _camParams;
 
     tf::TransformBroadcaster _transformBroadcaster;
     std::list<tf::StampedTransform> _markerTransforms;
