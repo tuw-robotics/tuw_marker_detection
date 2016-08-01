@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="robot" default="r1" />
+  <arg name="camera" default="front_camera" />
+  <arg name="image" default="image_raw" />
+  <group ns="$(arg robot)">
+    <!-- laod single detection -->
+    <node pkg="tuw_aruco" type="aruco_node" name="arMarker" output="screen">
+      <remap from="image" to="$(arg camera)/$(arg image)"/>
+      <remap from="camera_info" to="$(arg camera)/camera_info"/>   
+    </node>
+  </group>
+
+</launch>
+
