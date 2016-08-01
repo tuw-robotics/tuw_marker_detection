@@ -1,6 +1,6 @@
 <launch>
 
-  <node pkg="tuw_aruco" type="aruco_node" name="arMarker" output="screen">
+  <node pkg="tuw_aruco" type="aruco_node" name="arMarkerAruco" output="screen">
 
     <remap from="image" to="/camera/image_raw"/>
     <remap from="camera_info" to="/camera/camera_info"/>    
