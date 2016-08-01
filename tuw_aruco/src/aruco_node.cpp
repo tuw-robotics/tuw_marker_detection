@@ -41,41 +41,38 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
         vector< aruco::Marker > markers;
         markers = _detector.detect(img->image);
 
-        for (auto &marker:markers)//for each marker
-            _tracker[marker.id].estimatePose(marker, _camParams, 0.06f); //call its tracker and estimate the pose
-
-
-        // Publish transforms
+        // Estimate marker pose and create transforms
         _markerTransforms.clear();
 
         tf::StampedTransform st;
         for (auto &marker:markers) {
 
-            cv::Mat m = _tracker[marker.id].getRTMatrix();
+            bool success = _tracker[marker.id].estimatePose(marker, _camParams, 0.06f); //call its tracker and estimate the pose
+            if(success){
+                cv::Mat m = _tracker[marker.id].getRTMatrix();
 
-            float tX = m.at<float>(0, 3);
-            float tY = m.at<float>(1, 3);
-            float tZ = m.at<float>(2, 3);
+                float tX = m.at<float>(0, 3);
+                float tY = m.at<float>(1, 3);
+                float tZ = m.at<float>(2, 3);
 
-            tf::Matrix3x3 rm(
+                tf::Matrix3x3 rm(
                     m.at<float>(0, 0), m.at<float>(0, 1), m.at<float>(0, 2),
                     m.at<float>(1, 0), m.at<float>(1, 1), m.at<float>(1, 2),
                     m.at<float>(2, 0), m.at<float>(2, 1), m.at<float>(2, 2)
-            );
+                );
 
+                char markerLabel[32];
+                sprintf(markerLabel, "t%i", marker.id);
 
-            char markerLabel[32];
-            sprintf(markerLabel, "t%i", marker.id);
-
-            st = tf::StampedTransform(tf::Transform(rm, tf::Vector3(tX, tY, tZ)), ros::Time::now(), image_msg->header.frame_id, markerLabel);
-            _markerTransforms.push_back(st);
+                st = tf::StampedTransform(tf::Transform(rm, tf::Vector3(tX, tY, tZ)), ros::Time::now(), image_msg->header.frame_id, markerLabel);
+                _markerTransforms.push_back(st);
+            }
         }
 
-        // Broadcast
+        // Broadcast transforms
         for(std::list<tf::StampedTransform>::iterator it =  _markerTransforms.begin(); it != _markerTransforms.end(); it++) {
             _transformBroadcaster.sendTransform(*it);
         }
-
 
         // Draw markers
         cv::Mat debugImage = cv::Mat::zeros(640, 480, CV_8UC3);
