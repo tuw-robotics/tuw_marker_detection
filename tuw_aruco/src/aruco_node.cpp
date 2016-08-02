@@ -1,3 +1,34 @@
+/*
+ * Copyright (c) 2016, Lukas Pfeifhofer <lukas.pfeifhofer@devlabs.pro>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "aruco_node.hpp"
 
 int main(int argc, char **argv) {
@@ -8,16 +39,13 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-ArUcoNode::ArUcoNode(ros::NodeHandle &n) : _n(n), _imageTransport(n) {
-    _detector.setDictionary(aruco::Dictionary::ARTOOLKITPLUSBCH);//sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
-    _detector.setThresholdParams(7, 7);
-    _detector.setThresholdParamRange(2, 0);
+ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
 
     // Advert marker publisher
-    _pub_markers = _n.advertise<marker_msgs::MarkerDetection>("markers", 10);
+    pub_markers_ = n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
 
     // Subscribe to image topic
-    _cameraSubscriber = _imageTransport.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
+    cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
 
     cv::namedWindow("aruco_node_debug");
 }
@@ -38,7 +66,27 @@ static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::C
     return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camer_info->width, camer_info->height));
 }
 
-void ArUcoNode::publishMarkers(const std_msgs::Header &header) {
+static tf::StampedTransform markerPoseToStampedTransform(ArUcoMarkerPose &markerPose, const std_msgs::Header &header) {
+    cv::Mat m = markerPose.getRTMatrix();
+
+    tf::Vector3 tv(
+            m.at<float>(0, 3),
+            m.at<float>(1, 3),
+            m.at<float>(2, 3)
+    );
+
+    tf::Matrix3x3 rm(
+            m.at<float>(0, 0), m.at<float>(0, 1), m.at<float>(0, 2),
+            m.at<float>(1, 0), m.at<float>(1, 1), m.at<float>(1, 2),
+            m.at<float>(2, 0), m.at<float>(2, 1), m.at<float>(2, 2)
+    );
+
+    char markerLabel[64];
+    sprintf(markerLabel, "t%i", markerPose.getMarkerId());
+    return tf::StampedTransform(tf::Transform(rm, tv), ros::Time::now(), header.frame_id, markerLabel);
+}
+
+void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses) {
     marker_msgs::MarkerDetection msg;
 
     msg.header = header;
@@ -54,18 +102,18 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header) {
 
     msg.markers = marker_msgs::MarkerDetection::_markers_type();
 
-    for(std::list<tf::StampedTransform>::iterator it =  _markerTransforms.begin(); it != _markerTransforms.end(); it++) {
-        tf::StampedTransform stf = *it;
+    for (auto &markerPose:markerPoses) {
+        tf::StampedTransform stf = markerPoseToStampedTransform(markerPose, header);
 
         // Send transform
-        _transformBroadcaster.sendTransform(stf);
+        transformBroadcaster_.sendTransform(stf);
 
         // Push marker into MarkerDetection message
         marker_msgs::Marker marker;
 
         marker.ids.resize(1);
         marker.ids_confidence.resize(1);
-        marker.ids[0] = 0; // markerTransformsID_[i]; -- TODO: Fix me, marker id missing
+        marker.ids[0] = markerPose.getMarkerId();
         marker.ids_confidence[0] = 1;
         tf::poseTFToMsg(stf, marker.pose);
 
@@ -73,55 +121,35 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header) {
     }
 
     // Publish MarkerDetection message
-    _pub_markers.publish(msg);
+    pub_markers_.publish(msg);
 }
 
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
-    cv_bridge::CvImagePtr img;
+    cv_bridge::CvImagePtr imgPtr;
     try {
-        img = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::MONO8);
+        // Convert ros image message to cv::Mat
+        imgPtr = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::MONO8);
 
         // Convert ros camera parameter
         aruco::CameraParameters camParams = cameraInfoToCameraParameters(camer_info_);
 
+
         // Detect markers
-        vector< aruco::Marker > markers;
-        markers = _detector.detect(img->image);
+        vector<aruco::Marker> markers;
+        base_.detectMarkers(markers, imgPtr->image);
 
-        // Estimate marker pose and create transforms
-        _markerTransforms.clear();
+        // Do pose estimation for every marker found
+        vector<ArUcoMarkerPose> markerPoses;
+        base_.estimatePose(markerPoses, markers, camParams);
 
-        tf::StampedTransform st;
-        for (auto &marker:markers) {
 
-            bool success = _tracker[marker.id].estimatePose(marker, camParams, 0.06f); //call its tracker and estimate the pose
-            if(success){
-                cv::Mat m = _tracker[marker.id].getRTMatrix();
+        // Publish markers
+        publishMarkers(image_msg->header, markerPoses);
 
-                float tX = m.at<float>(0, 3);
-                float tY = m.at<float>(1, 3);
-                float tZ = m.at<float>(2, 3);
 
-                tf::Matrix3x3 rm(
-                    m.at<float>(0, 0), m.at<float>(0, 1), m.at<float>(0, 2),
-                    m.at<float>(1, 0), m.at<float>(1, 1), m.at<float>(1, 2),
-                    m.at<float>(2, 0), m.at<float>(2, 1), m.at<float>(2, 2)
-                );
-
-                char markerLabel[32];
-                sprintf(markerLabel, "t%i", marker.id);
-
-                st = tf::StampedTransform(tf::Transform(rm, tf::Vector3(tX, tY, tZ)), ros::Time::now(), image_msg->header.frame_id, markerLabel);
-                _markerTransforms.push_back(st);
-            }
-        }
-
-        // Broadcast markers and transforms
-        publishMarkers(image_msg->header);
-
-        // Draw markers
+        // Draw markers if debug image is enabled
         cv::Mat debugImage = cv::Mat::zeros(640, 480, CV_8UC3);
-        cvtColor(img->image, debugImage, cv::COLOR_GRAY2BGR);
+        cvtColor(imgPtr->image, debugImage, cv::COLOR_GRAY2BGR);
 
         for (unsigned int i = 0; i < markers.size(); i++) {
             // draw 2d info
@@ -133,7 +161,7 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
         }
 
         cv::imshow("aruco_node_debug", debugImage);
-        cv::waitKey ( 5 );
+        cv::waitKey(5);
     } catch (cv_bridge::Exception &e) {
         ROS_ERROR ("cv_bridge exception: %s", e.what());
         return;

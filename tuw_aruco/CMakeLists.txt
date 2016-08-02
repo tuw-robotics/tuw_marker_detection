@@ -123,7 +123,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS} ${ARUCO_LIB_DIR}src/)
+include_directories(include/ ${catkin_INCLUDE_DIRS} ${ARUCO_LIB_DIR}src/)
 
 ## Declare a C++ library
 # add_library(tuw_aruco
@@ -137,7 +137,7 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${ARUCO_LIB_DIR}src/)
 
 ## Declare a C++ executable
 # add_executable(tuw_aruco_node src/tuw_aruco_node.cpp)
-add_executable(aruco_node src/aruco_node.cpp)
+add_executable(aruco_node src/aruco_node.cpp src/aruco_base.cpp src/aruco_parameters.cpp src/aruco_marker_pose.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
