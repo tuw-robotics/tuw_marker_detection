@@ -42,13 +42,22 @@ public:
 
     void setDictionary(std::string dictionary);
     std::string getDictionary();
+    bool getPublishTf();
+    bool getPublishMarkers();
+    bool getShowDebugImage();
 
     void setMarkerSize(float mSize);
     float getMarkerSize();
+    void setPublishTf(bool b);
+    void setPublishMarkers(bool b);
+    void setShowDebugImage(bool b);
 
 private:
     std::string dictionary_;
     float markerSize_;
+    bool publish_tf_;
+    bool publish_markers_;
+    bool show_debug_image_;
 
 };
 

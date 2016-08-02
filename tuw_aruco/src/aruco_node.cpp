@@ -41,13 +41,16 @@ int main(int argc, char **argv) {
 
 ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
 
+    // Register dynamic_reconfigure callback
+    configCallbackFnct_ = boost::bind(&ArUcoNode::configCallback, this ,  _1, _2);
+    configServer_.setCallback(configCallbackFnct_);
+
     // Advert marker publisher
     pub_markers_ = n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
 
     // Subscribe to image topic
     cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
 
-    cv::namedWindow("aruco_node_debug");
 }
 
 ArUcoNode::~ArUcoNode() {}
@@ -106,7 +109,8 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarke
         tf::StampedTransform stf = markerPoseToStampedTransform(markerPose, header);
 
         // Send transform
-        transformBroadcaster_.sendTransform(stf);
+        if (base_.getParameters().getPublishTf())
+            transformBroadcaster_.sendTransform(stf);
 
         // Push marker into MarkerDetection message
         marker_msgs::Marker marker;
@@ -121,7 +125,8 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarke
     }
 
     // Publish MarkerDetection message
-    pub_markers_.publish(msg);
+    if (base_.getParameters().getPublishMarkers())
+        pub_markers_.publish(msg);
 }
 
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
@@ -148,23 +153,43 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
 
 
         // Draw markers if debug image is enabled
-        cv::Mat debugImage = cv::Mat::zeros(640, 480, CV_8UC3);
-        cvtColor(imgPtr->image, debugImage, cv::COLOR_GRAY2BGR);
+        if(base_.getParameters().getShowDebugImage()){
+            cv::Mat debugImage;
+            cvtColor(imgPtr->image, debugImage, cv::COLOR_GRAY2BGR);
 
-        for (unsigned int i = 0; i < markers.size(); i++) {
-            // draw 2d info
-            markers[i].draw(debugImage, cv::Scalar(0, 0, 255), 1);
+            for (unsigned int i = 0; i < markers.size(); i++) {
+                // draw 2d info
+                markers[i].draw(debugImage, cv::Scalar(0, 0, 255), 1);
 
-            // draw a 3d cube
-            aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], camParams);
-            aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], camParams);
+                // draw a 3d cube
+                aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], camParams);
+                aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], camParams);
+            }
+
+            cv::imshow("aruco_node_debug", debugImage);
+            cv::waitKey(5);
         }
-
-        cv::imshow("aruco_node_debug", debugImage);
-        cv::waitKey(5);
     } catch (cv_bridge::Exception &e) {
         ROS_ERROR ("cv_bridge exception: %s", e.what());
         return;
     }
+}
+
+void ArUcoNode::configCallback(tuw_aruco::ARParamConfig &config, uint32_t level) {
+    /*
+    ROS_INFO("Reconfigure Request:");
+    ROS_INFO("show_debug_image: %s", config.show_debug_image ? "True" : "False");
+    ROS_INFO("marker_dictonary: %s", config.marker_dictonary.c_str());
+    ROS_INFO("marker_size: %f", config.marker_size);
+    ROS_INFO("publish_tf: %s", config.publish_tf ? "True" : "False");
+    ROS_INFO("publish_markers: %s", config.publish_markers ? "True" : "False");
+    */
+
+    base_.getParameters().setShowDebugImage(config.show_debug_image);
+    base_.getParameters().setDictionary(config.marker_dictonary);
+    base_.getParameters().setMarkerSize(config.marker_size);
+    base_.getParameters().setPublishTf(config.publish_tf);
+    base_.getParameters().setPublishMarkers(config.publish_markers);
+    base_.refreshParameters();
 }
 

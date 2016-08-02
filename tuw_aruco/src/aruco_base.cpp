@@ -44,12 +44,16 @@ void ArUcoBase::detectMarkers(vector<aruco::Marker> &markers, cv::Mat image) {
 void ArUcoBase::estimatePose(vector<ArUcoMarkerPose> &markerPoses, vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams) {
     markerPoses.clear();
     for (auto &marker:markers) {
-        bool success = tracker_[marker.id].estimatePose(marker, cameraParams, params_.getMarkerSize());
+        bool success = tracker_[marker.id].estimatePose(marker, cameraParams, params_.getMarkerSize(), 1.0f);
         if(success){
             cv::Mat rtMatrix = tracker_[marker.id].getRTMatrix();
             markerPoses.push_back(ArUcoMarkerPose(marker.id, rtMatrix));
         }
     }
+}
+
+ArUcoParameters &ArUcoBase::getParameters(){
+    return params_;
 }
 
 void ArUcoBase::refreshParameters() {

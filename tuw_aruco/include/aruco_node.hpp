@@ -40,6 +40,9 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <dynamic_reconfigure/server.h>
+#include <tuw_aruco/ARParamConfig.h>
+
 #include "aruco.h"
 #include "aruco_base.hpp"
 
@@ -58,11 +61,16 @@ private:
     tf::TransformBroadcaster transformBroadcaster_;
     ros::Publisher pub_markers_;
 
+    dynamic_reconfigure::Server<tuw_aruco::ARParamConfig> configServer_;
+    dynamic_reconfigure::Server<tuw_aruco::ARParamConfig>::CallbackType configCallbackFnct_;
+
     ArUcoBase base_;
 
     void imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_);
 
     void publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses);
+
+    void configCallback(tuw_aruco::ARParamConfig &config, uint32_t level);
 };
 
 #endif // TUW_ARUCO_ARUCO_NODE_H

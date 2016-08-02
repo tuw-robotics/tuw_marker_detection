@@ -34,22 +34,49 @@
 ArUcoParameters::ArUcoParameters() {
     dictionary_ = "ARTOOLKITPLUSBCH";
     markerSize_ = 0.06f;
+    publish_tf_ = true;
+    publish_markers_ = true;
+    show_debug_image_ = true;
 }
 
-ArUcoParameters::~ArUcoParameters() { }
-
-void ArUcoParameters::setDictionary(std::string dictionary) {
-    dictionary_ = dictionary;
-}
+ArUcoParameters::~ArUcoParameters() {}
 
 std::string ArUcoParameters::getDictionary() {
     return dictionary_;
 }
 
-void ArUcoParameters::setMarkerSize(float mSize){
+float ArUcoParameters::getMarkerSize() {
+    return markerSize_;
+}
+
+bool ArUcoParameters::getPublishTf() {
+    return publish_tf_;
+}
+
+bool ArUcoParameters::getPublishMarkers() {
+    return publish_markers_;
+}
+
+bool ArUcoParameters::getShowDebugImage() {
+    return show_debug_image_;
+}
+
+void ArUcoParameters::setDictionary(std::string dictionary) {
+    dictionary_ = dictionary;
+}
+
+void ArUcoParameters::setMarkerSize(float mSize) {
     markerSize_ = mSize;
 }
 
-float ArUcoParameters::getMarkerSize(){
-    return markerSize_;
+void ArUcoParameters::setPublishTf(bool b) {
+    publish_tf_ = b;
+}
+
+void ArUcoParameters::setPublishMarkers(bool b) {
+    publish_markers_ = b;
+}
+
+void ArUcoParameters::setShowDebugImage(bool b) {
+    show_debug_image_ = b;
 }
