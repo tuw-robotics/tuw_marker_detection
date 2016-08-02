@@ -54,11 +54,13 @@ ArUcoNode::~ArUcoNode() {}
 
 static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::CameraInfoConstPtr &camer_info) {
     float camera_matrix_data[9];
-    memcpy(camera_matrix_data, &camer_info->K[0], sizeof(float) * 9);
+    for(int i = 0; i < 9; i++)
+        camera_matrix_data[i] = camer_info->K[i];
     cv::Mat camera_matrix = cv::Mat(3, 3, CV_32F, camera_matrix_data);
 
     float distortion_coefficients_data[5];
-    memcpy(distortion_coefficients_data, &camer_info->D[0], sizeof(float) * 5);
+    for(int i = 0; i < 5; i++)
+        distortion_coefficients_data[i] = camer_info->D[i];
     cv::Mat distortion_coefficients = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
 
     return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camer_info->width, camer_info->height));
