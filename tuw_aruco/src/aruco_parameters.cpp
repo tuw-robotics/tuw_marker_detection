@@ -37,6 +37,8 @@ ArUcoParameters::ArUcoParameters() {
     publish_tf_ = true;
     publish_markers_ = true;
     show_debug_image_ = true;
+    publish_marker_candidates_ = false;
+    pose_estimation_enabled_ = true;
 }
 
 ArUcoParameters::~ArUcoParameters() {}
@@ -57,6 +59,14 @@ bool ArUcoParameters::getPublishMarkers() {
     return publish_markers_;
 }
 
+bool ArUcoParameters::getPublishMarkerCandidates() {
+    return publish_marker_candidates_;
+}
+
+bool ArUcoParameters::getPoseEstimationEnabled() {
+    return pose_estimation_enabled_;
+}
+
 bool ArUcoParameters::getShowDebugImage() {
     return show_debug_image_;
 }
@@ -75,6 +85,14 @@ void ArUcoParameters::setPublishTf(bool b) {
 
 void ArUcoParameters::setPublishMarkers(bool b) {
     publish_markers_ = b;
+}
+
+void ArUcoParameters::setPublishMarkerCandidates(bool b) {
+    publish_marker_candidates_ = b;
+}
+
+void ArUcoParameters::setPoseEstimationEnabled(bool b) {
+    pose_estimation_enabled_ = b;
 }
 
 void ArUcoParameters::setShowDebugImage(bool b) {

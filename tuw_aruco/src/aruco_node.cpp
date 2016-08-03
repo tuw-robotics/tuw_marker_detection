@@ -48,6 +48,9 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
     // Advert marker publisher
     pub_markers_ = n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
 
+    // Advert marker candidates publisher
+    pub_candidates_ = n_.advertise<marker_msgs::MarkerCandidateArray>("candidates", 10);
+
     // Subscribe to image topic
     cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
 
@@ -129,6 +132,44 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarke
         pub_markers_.publish(msg);
 }
 
+void ArUcoNode::publishMarkerCandidates(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
+    marker_msgs::MarkerCandidateArray msg;
+    msg.header = header;
+
+    for (auto &marker:markers) {
+        marker_msgs::MarkerCandidate candidate;
+        candidate.cameraK = camer_info_->K;
+        candidate.cameraD = camer_info_->D;
+
+        // Add all object points
+        for (auto &cvp: marker.get3DPoints(base_.getParameters().getMarkerSize())) {
+            geometry_msgs::Point point;
+            point.x = cvp.x;
+            point.y = cvp.y;
+            point.z = cvp.z;
+            candidate.objectPoints.push_back(point);
+        }
+
+        // Add all images points
+        for (cv::Point2f &p2d: marker) {
+            geometry_msgs::Point point;
+            point.x = p2d.x;
+            point.y = p2d.y;
+            point.z = 0.0f; // imagePoints are 2d
+            candidate.imagePoints.push_back(point);
+        }
+
+        candidate.ids.resize(1);
+        candidate.ids_confidence.resize(1);
+        candidate.ids[0] = marker.id;
+        candidate.ids_confidence[0] = 1;
+
+        msg.markers.push_back(candidate);
+    }
+
+    pub_candidates_.publish(msg);
+}
+
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
     cv_bridge::CvImagePtr imgPtr;
     try {
@@ -143,13 +184,19 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
         vector<aruco::Marker> markers;
         base_.detectMarkers(markers, imgPtr->image);
 
-        // Do pose estimation for every marker found
-        vector<ArUcoMarkerPose> markerPoses;
-        base_.estimatePose(markerPoses, markers, camParams);
+        // If enabled publish marker candidates
+        if(base_.getParameters().getPublishMarkerCandidates())
+            publishMarkerCandidates(image_msg->header, markers, camer_info_);
+
+        // If enabled do pose estimation for every marker found
+        if (base_.getParameters().getPoseEstimationEnabled()) {
+            vector<ArUcoMarkerPose> markerPoses;
+            base_.estimatePose(markerPoses, markers, camParams);
 
 
-        // Publish markers
-        publishMarkers(image_msg->header, markerPoses);
+            // Publish markers
+            publishMarkers(image_msg->header, markerPoses);
+        }
 
 
         // Draw markers if debug image is enabled
@@ -176,20 +223,13 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
 }
 
 void ArUcoNode::configCallback(tuw_aruco::ARParamConfig &config, uint32_t level) {
-    /*
-    ROS_INFO("Reconfigure Request:");
-    ROS_INFO("show_debug_image: %s", config.show_debug_image ? "True" : "False");
-    ROS_INFO("marker_dictonary: %s", config.marker_dictonary.c_str());
-    ROS_INFO("marker_size: %f", config.marker_size);
-    ROS_INFO("publish_tf: %s", config.publish_tf ? "True" : "False");
-    ROS_INFO("publish_markers: %s", config.publish_markers ? "True" : "False");
-    */
-
     base_.getParameters().setShowDebugImage(config.show_debug_image);
     base_.getParameters().setDictionary(config.marker_dictonary);
     base_.getParameters().setMarkerSize(config.marker_size);
     base_.getParameters().setPublishTf(config.publish_tf);
     base_.getParameters().setPublishMarkers(config.publish_markers);
+    base_.getParameters().setPublishMarkerCandidates(config.publish_marker_candidates);
+    base_.getParameters().setPoseEstimationEnabled(config.pose_estimation_enabled);
     base_.refreshParameters();
 }
 
