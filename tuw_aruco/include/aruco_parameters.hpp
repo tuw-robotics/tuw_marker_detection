@@ -44,7 +44,7 @@ public:
     std::string getDictionary();
     bool getPublishTf();
     bool getPublishMarkers();
-    bool getPublishMarkerCandidates();
+    bool getPublishFiducials();
     bool getPoseEstimationEnabled();
     bool getShowDebugImage();
 
@@ -52,7 +52,7 @@ public:
     float getMarkerSize();
     void setPublishTf(bool b);
     void setPublishMarkers(bool b);
-    void setPublishMarkerCandidates(bool b);
+    void setPublishFiducials(bool b);
     void setPoseEstimationEnabled(bool b);
     void setShowDebugImage(bool b);
 
@@ -61,7 +61,7 @@ private:
     float markerSize_;
     bool publish_tf_;
     bool publish_markers_;
-    bool publish_marker_candidates_;
+    bool publish_fiducials_;
     bool pose_estimation_enabled_;
     bool show_debug_image_;
 

@@ -48,8 +48,8 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
     // Advert marker publisher
     pub_markers_ = n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
 
-    // Advert marker candidates publisher
-    pub_candidates_ = n_.advertise<marker_msgs::MarkerCandidateArray>("candidates", 10);
+    // Advert fiducial publisher
+    pub_fiducials_ = n_.advertise<marker_msgs::FiducialDetection>("fiducials", 10);
 
     // Subscribe to image topic
     cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
@@ -132,14 +132,14 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarke
         pub_markers_.publish(msg);
 }
 
-void ArUcoNode::publishMarkerCandidates(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
-    marker_msgs::MarkerCandidateArray msg;
+void ArUcoNode::publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
+    marker_msgs::FiducialDetection msg;
     msg.header = header;
+    msg.camera_k = camer_info_->K;
+    msg.camera_d = camer_info_->D;
 
     for (auto &marker:markers) {
-        marker_msgs::MarkerCandidate candidate;
-        candidate.cameraK = camer_info_->K;
-        candidate.cameraD = camer_info_->D;
+        marker_msgs::Fiducial fiducial;
 
         // Add all object points
         for (auto &cvp: marker.get3DPoints(base_.getParameters().getMarkerSize())) {
@@ -147,7 +147,7 @@ void ArUcoNode::publishMarkerCandidates(const std_msgs::Header &header, vector<a
             point.x = cvp.x;
             point.y = cvp.y;
             point.z = cvp.z;
-            candidate.objectPoints.push_back(point);
+            fiducial.object_points.push_back(point);
         }
 
         // Add all images points
@@ -156,18 +156,18 @@ void ArUcoNode::publishMarkerCandidates(const std_msgs::Header &header, vector<a
             point.x = p2d.x;
             point.y = p2d.y;
             point.z = 0.0f; // imagePoints are 2d
-            candidate.imagePoints.push_back(point);
+            fiducial.image_points.push_back(point);
         }
 
-        candidate.ids.resize(1);
-        candidate.ids_confidence.resize(1);
-        candidate.ids[0] = marker.id;
-        candidate.ids_confidence[0] = 1;
+        fiducial.ids.resize(1);
+        fiducial.ids_confidence.resize(1);
+        fiducial.ids[0] = marker.id;
+        fiducial.ids_confidence[0] = 1;
 
-        msg.markers.push_back(candidate);
+        msg.fiducial.push_back(fiducial);
     }
 
-    pub_candidates_.publish(msg);
+    pub_fiducials_.publish(msg);
 }
 
 void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
@@ -184,9 +184,9 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
         vector<aruco::Marker> markers;
         base_.detectMarkers(markers, imgPtr->image);
 
-        // If enabled publish marker candidates
-        if(base_.getParameters().getPublishMarkerCandidates())
-            publishMarkerCandidates(image_msg->header, markers, camer_info_);
+        // If enabled publish fiducials
+        if(base_.getParameters().getPublishFiducials())
+            publishFiducials(image_msg->header, markers, camer_info_);
 
         // If enabled do pose estimation for every marker found
         if (base_.getParameters().getPoseEstimationEnabled()) {
@@ -228,7 +228,7 @@ void ArUcoNode::configCallback(tuw_aruco::ARParamConfig &config, uint32_t level)
     base_.getParameters().setMarkerSize(config.marker_size);
     base_.getParameters().setPublishTf(config.publish_tf);
     base_.getParameters().setPublishMarkers(config.publish_markers);
-    base_.getParameters().setPublishMarkerCandidates(config.publish_marker_candidates);
+    base_.getParameters().setPublishFiducials(config.publish_fiducials);
     base_.getParameters().setPoseEstimationEnabled(config.pose_estimation_enabled);
     base_.refreshParameters();
 }

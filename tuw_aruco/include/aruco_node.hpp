@@ -36,7 +36,7 @@
 #include <image_transport/image_transport.h>
 #include <tf/transform_broadcaster.h>
 #include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/MarkerCandidateArray.h>
+#include <marker_msgs/FiducialDetection.h>
 
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/highgui/highgui.hpp>
@@ -61,7 +61,7 @@ private:
 
     tf::TransformBroadcaster transformBroadcaster_;
     ros::Publisher pub_markers_;
-    ros::Publisher pub_candidates_;
+    ros::Publisher pub_fiducials_;
 
     dynamic_reconfigure::Server<tuw_aruco::ARParamConfig> configServer_;
     dynamic_reconfigure::Server<tuw_aruco::ARParamConfig>::CallbackType configCallbackFnct_;
@@ -72,7 +72,7 @@ private:
 
     void publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses);
 
-    void publishMarkerCandidates(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
+    void publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
 
     void configCallback(tuw_aruco::ARParamConfig &config, uint32_t level);
 };
