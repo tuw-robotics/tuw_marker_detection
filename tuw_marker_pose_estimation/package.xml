@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>tuw_marker_detection</name>
-  <version>0.0.0</version>
-  <description>The tuw_marker_detection package</description>
+  <name>tuw_marker_pose_estimation</name>
+  <version>0.0.1</version>
+  <description>This node does pose estimation for detected fiducials (marker_msgs/FiducialDetection.msg)</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="markus.bader@tuwien.ac.at">Markus Bader</maintainer>
+  <maintainer email="lukas.pfeifhofer@devlabs.pro">Lukas Pfeifhofer</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -19,13 +19,13 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/tuw_visual_marker</url> -->
+  <!-- <url type="website">http://wiki.ros.org/tuw_marker_pose_estimation</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
   <!-- Example: -->
-  <author email="markus.bader@tuwien.ac.at">Markus Bader</author> 
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
 
   <!-- The *_depend tags are used to specify dependencies -->
@@ -41,14 +41,32 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>tuw_artoolkitplus</run_depend>
-  <run_depend>tuw_ellipses</run_depend>
-  <run_depend>tuw_aruco</run_depend>
-  <run_depend>tuw_marker_pose_estimation</run_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>image_geometry</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>opencv3</build_depend>
+  <build_depend>marker_msgs</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>image_geometry</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>opencv3</run_depend>
+  <run_depend>marker_msgs</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-    <metapackage />
+
   </export>
 </package>
