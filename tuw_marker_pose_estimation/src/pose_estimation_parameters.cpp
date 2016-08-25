@@ -29,43 +29,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#include "pose_estimation_parameters.h"
 
-#include "ros/ros.h"
-#include <tf/transform_broadcaster.h>
-#include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/FiducialDetection.h>
+PoseEstimationParameters::PoseEstimationParameters() {
+    pose_estimator_type_ = 0;
+    publish_tf_ = true;
+    publish_markers_ = true;
+}
 
-#include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/ARParamConfig.h>
+PoseEstimationParameters::~PoseEstimationParameters() {}
 
-#include "pose_estimation_base.h"
+int PoseEstimationParameters::getPoseEstimatorType() {
+    return pose_estimator_type_;
+}
 
-class PoseEstimationNode {
-public:
-    PoseEstimationNode(ros::NodeHandle &n);
+bool PoseEstimationParameters::getPublishTf() {
+    return publish_tf_;
+}
 
-    ~PoseEstimationNode();
+bool PoseEstimationParameters::getPublishMarkers() {
+    return publish_markers_;
+}
 
-private:
-    ros::NodeHandle n_;
+void PoseEstimationParameters::setPoseEstimatorType(int type) {
+    pose_estimator_type_ = type;
+}
 
-    ros::Subscriber fiducialDetectionSubscriber_;
+void PoseEstimationParameters::setPublishTf(bool b) {
+    publish_tf_ = b;
+}
 
-    tf::TransformBroadcaster transformBroadcaster_;
-    ros::Publisher pub_markers_;
-
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig>::CallbackType configCallbackFnct_;
-
-    PoseEstimationBase base_;
-
-    void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
-
-    void publishMarkers();
-
-    void configCallback(tuw_marker_pose_estimation::ARParamConfig &config, uint32_t level);
-};
-
-#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+void PoseEstimationParameters::setPublishMarkers(bool b) {
+    publish_markers_ = b;
+}

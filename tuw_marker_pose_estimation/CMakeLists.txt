@@ -137,7 +137,7 @@ include_directories(
 
 ## Declare a C++ executable
 # add_executable(tuw_marker_pose_estimation_node src/tuw_marker_pose_estimation_node.cpp)
-add_executable(pose_estimation_node src/pose_estimation_node.cpp)
+add_executable(pose_estimation_node src/pose_estimation_node.cpp src/pose_estimation_base.cpp src/pose_estimation_parameters.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

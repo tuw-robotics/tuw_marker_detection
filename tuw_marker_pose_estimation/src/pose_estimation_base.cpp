@@ -29,43 +29,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-
-#include "ros/ros.h"
-#include <tf/transform_broadcaster.h>
-#include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/FiducialDetection.h>
-
-#include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/ARParamConfig.h>
-
 #include "pose_estimation_base.h"
 
-class PoseEstimationNode {
-public:
-    PoseEstimationNode(ros::NodeHandle &n);
+PoseEstimationBase::PoseEstimationBase() : params_() {
+    refreshParameters();
+}
 
-    ~PoseEstimationNode();
+PoseEstimationBase::~PoseEstimationBase() {}
 
-private:
-    ros::NodeHandle n_;
 
-    ros::Subscriber fiducialDetectionSubscriber_;
+PoseEstimationParameters &PoseEstimationBase::getParameters() {
+    return params_;
+}
 
-    tf::TransformBroadcaster transformBroadcaster_;
-    ros::Publisher pub_markers_;
+void PoseEstimationBase::refreshParameters() {
 
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig>::CallbackType configCallbackFnct_;
-
-    PoseEstimationBase base_;
-
-    void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
-
-    void publishMarkers();
-
-    void configCallback(tuw_marker_pose_estimation::ARParamConfig &config, uint32_t level);
-};
-
-#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+}
