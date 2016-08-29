@@ -6,9 +6,9 @@
   <group ns="$(arg robot)">
     <!-- laod single detection -->
     <node pkg="tuw_aruco" type="aruco_node" name="arMarkerAruco" output="screen">
+      
       <remap from="image" to="$(arg camera)/$(arg image)"/>
       <remap from="camera_info" to="$(arg camera)/camera_info"/>   
-      <remap from="markers" to="markersAruco"/>
     </node>
   </group>
 
