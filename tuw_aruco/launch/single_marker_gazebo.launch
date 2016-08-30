@@ -8,7 +8,7 @@
             <param name="show_debug_image" value="true"/>
 
             <param name="marker_dictonary" value="ARTOOLKITPLUSBCH"/>
-            <param name="marker_size" value="0.06"/>
+            <param name="marker_size" value="0.2"/>
 
             <param name="publish_tf" value="true"/>
             <param name="publish_markers" value="true"/>
