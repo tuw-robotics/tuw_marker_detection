@@ -124,7 +124,7 @@ void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDe
     }
 }
 
-void PoseEstimationNode::configCallback(tuw_marker_pose_estimation::ARParamConfig &config, uint32_t level) {
+void PoseEstimationNode::configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level) {
     base_.getParameters().setPoseEstimatorType(config.pose_estimation_type);
     base_.getParameters().setPublishTf(config.publish_tf);
     base_.getParameters().setPublishMarkers(config.publish_markers);

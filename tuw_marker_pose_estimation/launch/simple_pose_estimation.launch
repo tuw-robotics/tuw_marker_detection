@@ -1,8 +1,0 @@
-<launch>
-
-    <node pkg="tuw_marker_pose_estimation" type="pose_estimation_node" name="arPoseEstimation" output="screen">
-        <remap from="fiducials" to="/fiducialsAruco"/>
-        <remap from="markers" to="/markersPoseEstimation"/>
-    </node>
-
-</launch>

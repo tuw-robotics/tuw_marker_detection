@@ -38,7 +38,7 @@
 #include <marker_msgs/FiducialDetection.h>
 
 #include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/ARParamConfig.h>
+#include <tuw_marker_pose_estimation/MarkerPoseEstimationConfig.h>
 
 #include "pose_estimation_base.h"
 
@@ -56,8 +56,8 @@ private:
     tf::TransformBroadcaster transformBroadcaster_;
     ros::Publisher pub_markers_;
 
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::ARParamConfig>::CallbackType configCallbackFnct_;
+    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig> configServer_;
+    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig>::CallbackType configCallbackFnct_;
 
     PoseEstimationBase base_;
 
@@ -65,7 +65,7 @@ private:
 
     void publishMarkers();
 
-    void configCallback(tuw_marker_pose_estimation::ARParamConfig &config, uint32_t level);
+    void configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level);
 };
 
 #endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
