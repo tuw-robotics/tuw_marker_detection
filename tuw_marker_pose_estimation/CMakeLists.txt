@@ -37,7 +37,12 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(pose_estimation_node src/pose_estimation_node.cpp src/pose_estimation_base.cpp src/pose_estimation_parameters.cpp)
+add_executable(pose_estimation_node
+    src/pose_estimation_node.cpp
+    src/pose_estimation_base.cpp
+    src/pose_estimation_parameters.cpp
+    src/marker_fiducials.cpp
+)
 
 ## Add cmake target dependencies of the executable
 add_dependencies(pose_estimation_node ${PROJECT_NAME}_gencfg)

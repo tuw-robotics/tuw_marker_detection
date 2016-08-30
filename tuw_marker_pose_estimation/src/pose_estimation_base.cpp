@@ -31,12 +31,43 @@
 
 #include "pose_estimation_base.h"
 
+#include "ros/ros.h"
+
 PoseEstimationBase::PoseEstimationBase() : params_() {
     refreshParameters();
 }
 
 PoseEstimationBase::~PoseEstimationBase() {}
 
+static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
+    if (_rvec.empty())
+        return cv::Mat();
+    cv::Mat m = cv::Mat::eye(4, 4, CV_32FC1);
+    cv::Mat R33 = cv::Mat(m, cv::Rect(0, 0, 3, 3));
+    cv::Rodrigues(_rvec, R33);
+    for (int i = 0; i < 3; i++)
+        m.at<float>(i, 3) = _tvec.ptr<float>(0)[i];
+    return m;
+}
+
+void PoseEstimationBase::estimatePose(std::vector<MarkerFiducials> &markers,
+                                      cv::Mat &camera_k, cv::Mat &camera_d) {
+    for (auto &marker:markers) {
+        // Currently we only support the default opencv pose estimation so the parameter PoseEstimatorType is not used.
+        // If you want to add additional methods than start to differentiate them here.
+        {
+            cv::Mat rv, tv;
+            cv::solvePnP(marker.object_points, marker.image_points, camera_k, camera_d, rv, tv);
+
+            cv::Mat rvec, tvec;
+            rv.convertTo(rvec, CV_32F);
+            tv.convertTo(tvec, CV_32F);
+
+            marker.rt_matrix = getRTMatrix(rvec, tvec);
+        }
+
+    }
+}
 
 PoseEstimationParameters &PoseEstimationBase::getParameters() {
     return params_;

@@ -29,43 +29,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#ifndef TUW_MARKER_POSE_ESTIMATION_MARKER_H
+#define TUW_MARKER_POSE_ESTIMATION_MARKER_H
 
-#include "ros/ros.h"
-#include <tf/transform_broadcaster.h>
-#include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/FiducialDetection.h>
+#include "opencv2/opencv.hpp"
 
-#include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/MarkerPoseEstimationConfig.h>
-
-#include "pose_estimation_base.h"
-
-class PoseEstimationNode {
+class MarkerFiducials {
 public:
-    PoseEstimationNode(ros::NodeHandle &n);
+    MarkerFiducials(std::vector<int> ids, std::vector<double> ids_confidence);
 
-    ~PoseEstimationNode();
+    std::vector<int> ids;
+    std::vector<double> ids_confidence;
 
-private:
-    ros::NodeHandle n_;
+    std::vector<cv::Point3f> object_points;
+    std::vector<cv::Point2f> image_points;
 
-    ros::Subscriber fiducialDetectionSubscriber_;
+    cv::Mat rt_matrix;
 
-    tf::TransformBroadcaster transformBroadcaster_;
-    ros::Publisher pub_markers_;
-
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig>::CallbackType configCallbackFnct_;
-
-    PoseEstimationBase base_;
-
-    void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
-
-    void publishMarkers(const std_msgs::Header &header, std::vector<MarkerFiducials> &markerPoses);
-
-    void configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level);
 };
 
-#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#endif //TUW_MARKER_POSE_ESTIMATION_MARKER_H

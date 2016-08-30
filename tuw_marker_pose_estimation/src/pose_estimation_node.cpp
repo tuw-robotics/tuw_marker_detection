@@ -30,7 +30,6 @@
  */
 
 #include "pose_estimation_node.h"
-#include "opencv2/opencv.hpp"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "arPoseEstimation");
@@ -54,35 +53,6 @@ PoseEstimationNode::PoseEstimationNode(ros::NodeHandle &n) : n_(n) {
 
 PoseEstimationNode::~PoseEstimationNode() {}
 
-static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
-    if (_rvec.empty())
-        return cv::Mat();
-    cv::Mat m = cv::Mat::eye(4, 4, CV_32FC1);
-    cv::Mat R33 = cv::Mat(m, cv::Rect(0, 0, 3, 3));
-    cv::Rodrigues(_rvec, R33);
-    for (int i = 0; i < 3; i++)
-        m.at<float>(i, 3) = _tvec.ptr<float>(0)[i];
-    return m;
-}
-
-static tf::StampedTransform rtMatrixToStampedTransform(cv::Mat &m, const std_msgs::Header &header) {
-    tf::Vector3 tv(
-            m.at<float>(0, 3),
-            m.at<float>(1, 3),
-            m.at<float>(2, 3)
-    );
-
-    tf::Matrix3x3 rm(
-            m.at<float>(0, 0), m.at<float>(0, 1), m.at<float>(0, 2),
-            m.at<float>(1, 0), m.at<float>(1, 1), m.at<float>(1, 2),
-            m.at<float>(2, 0), m.at<float>(2, 1), m.at<float>(2, 2)
-    );
-
-    char markerLabel[64];
-    sprintf(markerLabel, "t%i", 0);
-    return tf::StampedTransform(tf::Transform(rm, tv), ros::Time::now(), header.frame_id, markerLabel);
-}
-
 void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg) {
 
     // Convert camera matrix msg to cv::Mat
@@ -97,31 +67,86 @@ void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDe
     cv::Mat camera_d = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
 
 
+    std::vector<MarkerFiducials> markers;
     for (auto &fiducial:msg->fiducial) {
+        MarkerFiducials marker(fiducial.ids, fiducial.ids_confidence);
 
-        std::vector<cv::Point3f> object_points;
         for (auto &object_point:fiducial.object_points)
-            object_points.push_back(cv::Point3f(object_point.x, object_point.y, object_point.z));
+            marker.object_points.push_back(cv::Point3f(object_point.x, object_point.y, object_point.z));
 
-        std::vector<cv::Point2f> image_points;
         for (auto &image_point:fiducial.image_points)
-            image_points.push_back(cv::Point2f(image_point.x, image_point.y));
+            marker.image_points.push_back(cv::Point2f(image_point.x, image_point.y));
 
-        cv::Mat rv, tv;
-        cv::solvePnP(object_points, image_points, camera_k, camera_d, rv, tv);
-
-        cv::Mat rvec, tvec;
-        rv.convertTo(rvec, CV_32F);
-        tv.convertTo(tvec, CV_32F);
-
-        cv::Mat rtm = getRTMatrix(rvec, tvec);
-        tf::StampedTransform stf = rtMatrixToStampedTransform(rtm, msg->header);
-
-        transformBroadcaster_.sendTransform(stf);
-
-        ROS_INFO("header.seq: [%d] - send transform", msg->header.seq);
-
+        markers.push_back(marker);
     }
+
+    // Do pose estimation
+    base_.estimatePose(markers, camera_k, camera_d);
+
+    // Publish ros messages
+    publishMarkers(msg->header, markers);
+}
+
+static tf::StampedTransform markerPoseToStampedTransform(MarkerFiducials &markerPose, const std_msgs::Header &header) {
+    cv::Mat m = markerPose.rt_matrix;
+
+    tf::Vector3 tv(
+            m.at<float>(0, 3),
+            m.at<float>(1, 3),
+            m.at<float>(2, 3)
+    );
+
+    tf::Matrix3x3 rm(
+            m.at<float>(0, 0), m.at<float>(0, 1), m.at<float>(0, 2),
+            m.at<float>(1, 0), m.at<float>(1, 1), m.at<float>(1, 2),
+            m.at<float>(2, 0), m.at<float>(2, 1), m.at<float>(2, 2)
+    );
+
+    char markerLabel[64];
+    if (markerPose.ids.size() > 0) {
+        sprintf(markerLabel, "t%i", markerPose.ids[0]);
+    } else {
+        sprintf(markerLabel, "t?");
+    }
+    return tf::StampedTransform(tf::Transform(rm, tv), ros::Time::now(), header.frame_id, markerLabel);
+}
+
+void PoseEstimationNode::publishMarkers(const std_msgs::Header &header, std::vector<MarkerFiducials> &markerPoses) {
+    marker_msgs::MarkerDetection msg;
+
+    msg.header = header;
+    msg.distance_min =  0; //TODO
+    msg.distance_max =  8; //TODO
+    msg.distance_max_id = 5; //TODO
+    msg.view_direction.x = 0; //TODO
+    msg.view_direction.y = 0; //TODO
+    msg.view_direction.z = 0; //TODO
+    msg.view_direction.w = 1; //TODO
+    msg.fov_horizontal = 6; //TODO
+    msg.fov_vertical = 0; //TODO
+
+    msg.markers = marker_msgs::MarkerDetection::_markers_type();
+
+    for (auto &markerPose:markerPoses) {
+        tf::StampedTransform stf = markerPoseToStampedTransform(markerPose, header);
+
+        // Send transform
+        if (base_.getParameters().getPublishTf())
+            transformBroadcaster_.sendTransform(stf);
+
+        // Push marker into MarkerDetection message
+        marker_msgs::Marker marker;
+
+        marker.ids = markerPose.ids;
+        marker.ids_confidence = markerPose.ids_confidence;
+        tf::poseTFToMsg(stf, marker.pose);
+
+        msg.markers.push_back(marker);
+    }
+
+    // Publish MarkerDetection message
+    if (base_.getParameters().getPublishMarkers())
+        pub_markers_.publish(msg);
 }
 
 void PoseEstimationNode::configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level) {

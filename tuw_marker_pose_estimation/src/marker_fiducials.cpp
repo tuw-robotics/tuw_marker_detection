@@ -29,43 +29,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#include "marker_fiducials.h"
 
-#include "ros/ros.h"
-#include <tf/transform_broadcaster.h>
-#include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/FiducialDetection.h>
+MarkerFiducials::MarkerFiducials(std::vector<int> ids, std::vector<double> ids_confidence) : ids(ids), ids_confidence(
+        ids_confidence) {
 
-#include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/MarkerPoseEstimationConfig.h>
-
-#include "pose_estimation_base.h"
-
-class PoseEstimationNode {
-public:
-    PoseEstimationNode(ros::NodeHandle &n);
-
-    ~PoseEstimationNode();
-
-private:
-    ros::NodeHandle n_;
-
-    ros::Subscriber fiducialDetectionSubscriber_;
-
-    tf::TransformBroadcaster transformBroadcaster_;
-    ros::Publisher pub_markers_;
-
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig>::CallbackType configCallbackFnct_;
-
-    PoseEstimationBase base_;
-
-    void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
-
-    void publishMarkers(const std_msgs::Header &header, std::vector<MarkerFiducials> &markerPoses);
-
-    void configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level);
-};
-
-#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+}

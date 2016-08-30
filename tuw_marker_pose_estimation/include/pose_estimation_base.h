@@ -33,6 +33,7 @@
 #define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_BASE_H
 
 #include "pose_estimation_parameters.h"
+#include "marker_fiducials.h"
 #include "opencv2/opencv.hpp"
 
 class PoseEstimationBase {
@@ -41,21 +42,14 @@ public:
 
     ~PoseEstimationBase();
 
-    /*
-    void detectMarkers(vector<aruco::Marker> &markers, cv::Mat image);
-    void estimatePose(vector<ArUcoMarkerPose> &markerPoses, vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams);
-     */
-
+    void estimatePose(std::vector<MarkerFiducials> &markers,
+                      cv::Mat &camera_k, cv::Mat &camera_d);
     PoseEstimationParameters &getParameters();
     void refreshParameters();
 
 private:
     PoseEstimationParameters params_;
 
-    /*
-    aruco::MarkerDetector detector_;
-    std::map <uint32_t, aruco::MarkerPoseTracker> tracker_;
-    */
 };
 
 #endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_BASE_H
