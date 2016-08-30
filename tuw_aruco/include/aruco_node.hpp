@@ -42,7 +42,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <dynamic_reconfigure/server.h>
-#include <tuw_aruco/ARParamConfig.h>
+#include <tuw_aruco/ArUcoConfig.h>
 
 #include "aruco.h"
 #include "aruco_base.hpp"
@@ -63,8 +63,8 @@ private:
     ros::Publisher pub_markers_;
     ros::Publisher pub_fiducials_;
 
-    dynamic_reconfigure::Server<tuw_aruco::ARParamConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_aruco::ARParamConfig>::CallbackType configCallbackFnct_;
+    dynamic_reconfigure::Server<tuw_aruco::ArUcoConfig> configServer_;
+    dynamic_reconfigure::Server<tuw_aruco::ArUcoConfig>::CallbackType configCallbackFnct_;
 
     ArUcoBase base_;
 
@@ -74,7 +74,7 @@ private:
 
     void publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
 
-    void configCallback(tuw_aruco::ARParamConfig &config, uint32_t level);
+    void configCallback(tuw_aruco::ArUcoConfig &config, uint32_t level);
 };
 
 #endif // TUW_ARUCO_ARUCO_NODE_H

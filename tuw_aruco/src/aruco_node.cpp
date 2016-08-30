@@ -222,7 +222,7 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
     }
 }
 
-void ArUcoNode::configCallback(tuw_aruco::ARParamConfig &config, uint32_t level) {
+void ArUcoNode::configCallback(tuw_aruco::ArUcoConfig &config, uint32_t level) {
     base_.getParameters().setShowDebugImage(config.show_debug_image);
     base_.getParameters().setDictionary(config.marker_dictonary);
     base_.getParameters().setMarkerSize(config.marker_size);
