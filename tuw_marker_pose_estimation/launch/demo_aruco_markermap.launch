@@ -3,7 +3,7 @@
     <arg name="device" default="0"/>
     <arg name="show" default="false"/>
 
-    <node pkg="tuw_uvc" type="general_node" name="camera" output="screen">
+    <node pkg="tuw_uvc" type="general_node" name="camera">
         <param name="video_device" value="/dev/video$(arg device)"/>
         <param name="show_camera_image" value="$(arg show)"/>
         <param name="convert_image" value="1"/>

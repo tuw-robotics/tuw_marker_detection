@@ -51,6 +51,7 @@ add_executable(pose_estimation_markermap_node
     src/markermap/pose_estimation_markermap_base.cpp
     src/markermap/pose_estimation_markermap_parameters.cpp
     src/markermap/marker_map_estimator.cpp
+    src/markermap/marker_map_config.cpp
     src/marker_fiducials.cpp
     src/marker_pose.cpp
 )

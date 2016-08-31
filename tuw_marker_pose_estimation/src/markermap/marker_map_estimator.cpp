@@ -31,6 +31,8 @@
 
 #include "markermap/marker_map_estimator.h"
 
+#include "ros/ros.h"
+
 MarkerMapEstimator::MarkerMapEstimator(MarkerMapDetails details) : details_(details) {
 
 }
@@ -49,7 +51,7 @@ static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
 void
 MarkerMapEstimator::estimatePose(std::vector<MarkerFiducials> &markerFiducials, cv::Mat &camera_k, cv::Mat &camera_d,
                                  std::vector<MarkerPose> &markerPosesOutput) {
-
+    ROS_INFO("estimatePose");
     std::vector<cv::Point3f> object_points;
     std::vector<cv::Point2f> image_points;
 
@@ -68,10 +70,9 @@ MarkerMapEstimator::estimatePose(std::vector<MarkerFiducials> &markerFiducials, 
 
                     // Just add these object/image points
                     for (cv::Point3f &object_point:fiducial.object_points) {
-                        // FIXME: Not sure if we can't do this better than that...
-                        object_point = object_point +
-                                       cv::Point3f(markerDetails.position.getX(), markerDetails.position.getY(),
-                                                   markerDetails.position.getZ());
+                        object_point = object_point + cv::Point3f(markerDetails.position);
+                        // FIXME: No rotation is done yet
+                        // ROS_INFO("x=%f, y=%f, z=%f", object_point.x, object_point.y, object_point.z);
                         object_points.push_back(object_point);
                     }
 

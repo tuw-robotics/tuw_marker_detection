@@ -34,27 +34,37 @@
 PoseEstimationMarkerMapBase::PoseEstimationMarkerMapBase() : params_() {
     refreshParameters();
 
+    cv::Mat translation = cv::Mat::zeros(1, 3, CV_32FC1);
+    cv::Mat rotation = cv::Mat::zeros(1, 4, CV_32FC1);
+    rotation.at<float>(0, 0) = 1.0f;
 
     MarkerDetails markerTopLeft;
     markerTopLeft.id = 85;
-    markerTopLeft.position = tf::Vector3(-0.036, 0.036, 0);
-    markerTopLeft.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+    translation.at<float>(0, 0) = -0.036f;
+    translation.at<float>(0, 1) = 0.036f;
+    translation.copyTo(markerTopLeft.position);
+    rotation.copyTo(markerTopLeft.rotation);
 
     MarkerDetails markerTopRight;
     markerTopRight.id = 166;
-    markerTopRight.position = tf::Vector3(0.036, 0.036, 0);
-    markerTopRight.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+    translation.at<float>(0, 0) = 0.036f;
+    translation.at<float>(0, 1) = 0.036f;
+    translation.copyTo(markerTopRight.position);
+    rotation.copyTo(markerTopRight.rotation);
 
     MarkerDetails markerBottomLeft;
     markerBottomLeft.id = 161;
-    markerBottomLeft.position = tf::Vector3(-0.036, -0.036, 0);
-    markerBottomLeft.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+    translation.at<float>(0, 0) = -0.036f;
+    translation.at<float>(0, 1) = -0.036f;
+    translation.copyTo(markerBottomLeft.position);
+    rotation.copyTo(markerBottomLeft.rotation);
 
     MarkerDetails markerBottomRight;
     markerBottomRight.id = 227;
-    markerBottomRight.position = tf::Vector3(0.036, -0.036, 0);
-    markerBottomRight.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
-
+    translation.at<float>(0, 0) = 0.036f;
+    translation.at<float>(0, 1) = -0.036f;
+    translation.copyTo(markerBottomRight.position);
+    rotation.copyTo(markerBottomRight.rotation);
 
     MarkerMapDetails markerMap;
     markerMap.id = 1001;
@@ -63,12 +73,17 @@ PoseEstimationMarkerMapBase::PoseEstimationMarkerMapBase() : params_() {
     markerMap.markers.push_back(markerBottomLeft);
     markerMap.markers.push_back(markerBottomRight);
 
-    MarkerMapConfig cfg;
-    cfg.markerMaps.push_back(markerMap);
+    MarkerMapConfig markerMapConfig;
+    markerMapConfig.markerMaps.push_back(markerMap);
 
+    {
+        cv::FileStorage fs("/home/privacy/Documents/ros/workspace_repo/test_marker_config.xml", cv::FileStorage::WRITE);
+        fs << "markerMapConfig" << markerMapConfig;
+        fs.release();
+    }
 
     estimators_.clear();
-    for (auto &markerMap:cfg.markerMaps) {
+    for (auto &markerMap:markerMapConfig.markerMaps) {
         estimators_.push_back(MarkerMapEstimator(markerMap));
     }
 }
