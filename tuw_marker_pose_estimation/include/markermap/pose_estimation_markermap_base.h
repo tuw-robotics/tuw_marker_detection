@@ -29,43 +29,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
-#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#ifndef TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_MARKER_BASE_H
+#define TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_MARKER_BASE_H
 
-#include "ros/ros.h"
-#include <tf/transform_broadcaster.h>
-#include <marker_msgs/MarkerDetection.h>
-#include <marker_msgs/FiducialDetection.h>
+#include "pose_estimation_markermap_parameters.h"
+#include "marker_fiducials.h"
+#include "marker_pose.h"
+#include "opencv2/opencv.hpp"
+#include "marker_map_config.h"
+#include "marker_map_estimator.h"
 
-#include <dynamic_reconfigure/server.h>
-#include <tuw_marker_pose_estimation/MarkerPoseEstimationConfig.h>
-
-#include "pose_estimation_base.h"
-
-class PoseEstimationNode {
+class PoseEstimationMarkerMapBase {
 public:
-    PoseEstimationNode(ros::NodeHandle &n);
+    PoseEstimationMarkerMapBase();
 
-    ~PoseEstimationNode();
+    ~PoseEstimationMarkerMapBase();
+
+    void estimatePose(std::vector<MarkerFiducials> &markers,
+                      cv::Mat &camera_k, cv::Mat &camera_d, std::vector<MarkerPose> &markerPoses);
+    PoseEstimationMarkerMapParameters &getParameters();
+    void refreshParameters();
 
 private:
-    ros::NodeHandle n_;
+    PoseEstimationMarkerMapParameters params_;
 
-    ros::Subscriber fiducialDetectionSubscriber_;
+    std::vector<MarkerMapEstimator> estimators_;
 
-    tf::TransformBroadcaster transformBroadcaster_;
-    ros::Publisher pub_markers_;
-
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig> configServer_;
-    dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig>::CallbackType configCallbackFnct_;
-
-    PoseEstimationBase base_;
-
-    void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
-
-    void publishMarkers(const std_msgs::Header &header, std::vector<MarkerPose> &markerPoses);
-
-    void configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level);
 };
 
-#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_NODE_H
+#endif //TUW_MARKER_POSE_ESTIMATION_POSE_ESTIMATION_MARKER_BASE_H

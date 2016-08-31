@@ -43,9 +43,6 @@ public:
 
     std::vector<cv::Point3f> object_points;
     std::vector<cv::Point2f> image_points;
-
-    cv::Mat rt_matrix;
-
 };
 
 #endif //TUW_MARKER_POSE_ESTIMATION_MARKER_H

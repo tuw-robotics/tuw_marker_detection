@@ -22,6 +22,7 @@ find_package( OpenCV REQUIRED )
 ## Generate dynamic reconfigure parameters
 generate_dynamic_reconfigure_options(
         cfg/parameter.cfg
+        cfg/parameter_markermap.cfg
 )
 
 ## The catkin_package macro generates cmake config files for your package
@@ -42,13 +43,28 @@ add_executable(pose_estimation_node
     src/pose_estimation_base.cpp
     src/pose_estimation_parameters.cpp
     src/marker_fiducials.cpp
+    src/marker_pose.cpp
+)
+
+add_executable(pose_estimation_markermap_node
+    src/markermap/pose_estimation_markermap_node.cpp
+    src/markermap/pose_estimation_markermap_base.cpp
+    src/markermap/pose_estimation_markermap_parameters.cpp
+    src/markermap/marker_map_estimator.cpp
+    src/marker_fiducials.cpp
+    src/marker_pose.cpp
 )
 
 ## Add cmake target dependencies of the executable
 add_dependencies(pose_estimation_node ${PROJECT_NAME}_gencfg)
+add_dependencies(pose_estimation_markermap_node ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pose_estimation_node
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+)
+target_link_libraries(pose_estimation_markermap_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )

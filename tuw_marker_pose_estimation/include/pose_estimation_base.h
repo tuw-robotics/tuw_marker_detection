@@ -34,6 +34,7 @@
 
 #include "pose_estimation_parameters.h"
 #include "marker_fiducials.h"
+#include "marker_pose.h"
 #include "opencv2/opencv.hpp"
 
 class PoseEstimationBase {
@@ -43,7 +44,8 @@ public:
     ~PoseEstimationBase();
 
     void estimatePose(std::vector<MarkerFiducials> &markers,
-                      cv::Mat &camera_k, cv::Mat &camera_d);
+                      cv::Mat &camera_k, cv::Mat &camera_d,
+                      std::vector<MarkerPose> &markerPoses);
     PoseEstimationParameters &getParameters();
     void refreshParameters();
 

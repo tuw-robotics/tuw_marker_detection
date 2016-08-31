@@ -29,15 +29,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_estimation_base.h"
+#include "markermap/pose_estimation_markermap_base.h"
 
-#include "ros/ros.h"
-
-PoseEstimationBase::PoseEstimationBase() : params_() {
+PoseEstimationMarkerMapBase::PoseEstimationMarkerMapBase() : params_() {
     refreshParameters();
+
+
+    MarkerDetails markerTopLeft;
+    markerTopLeft.id = 85;
+    markerTopLeft.position = tf::Vector3(-0.036, 0.036, 0);
+    markerTopLeft.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+
+    MarkerDetails markerTopRight;
+    markerTopRight.id = 166;
+    markerTopRight.position = tf::Vector3(0.036, 0.036, 0);
+    markerTopRight.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+
+    MarkerDetails markerBottomLeft;
+    markerBottomLeft.id = 161;
+    markerBottomLeft.position = tf::Vector3(-0.036, -0.036, 0);
+    markerBottomLeft.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+
+    MarkerDetails markerBottomRight;
+    markerBottomRight.id = 227;
+    markerBottomRight.position = tf::Vector3(0.036, -0.036, 0);
+    markerBottomRight.rotation = tf::Quaternion(tf::Vector3(1, 0, 0), 0);
+
+
+    MarkerMapDetails markerMap;
+    markerMap.id = 1001;
+    markerMap.markers.push_back(markerTopLeft);
+    markerMap.markers.push_back(markerTopRight);
+    markerMap.markers.push_back(markerBottomLeft);
+    markerMap.markers.push_back(markerBottomRight);
+
+    MarkerMapConfig cfg;
+    cfg.markerMaps.push_back(markerMap);
+
+
+    estimators_.clear();
+    for (auto &markerMap:cfg.markerMaps) {
+        estimators_.push_back(MarkerMapEstimator(markerMap));
+    }
 }
 
-PoseEstimationBase::~PoseEstimationBase() {}
+PoseEstimationMarkerMapBase::~PoseEstimationMarkerMapBase() {}
 
 static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
     if (_rvec.empty())
@@ -50,34 +86,18 @@ static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
     return m;
 }
 
-void PoseEstimationBase::estimatePose(std::vector<MarkerFiducials> &markers,
-                                      cv::Mat &camera_k, cv::Mat &camera_d,
-                                      std::vector<MarkerPose> &markerPoses) {
-    for (auto &marker:markers) {
-        // Currently we only support the default opencv pose estimation so the parameter PoseEstimatorType is not used.
-        // If you want to add additional methods than start to differentiate them here.
-        {
-            cv::Mat rv, tv;
-            cv::solvePnP(marker.object_points, marker.image_points, camera_k, camera_d, rv, tv);
-
-            cv::Mat rvec, tvec;
-            rv.convertTo(rvec, CV_32F);
-            tv.convertTo(tvec, CV_32F);
-
-            MarkerPose pose(marker.ids, marker.ids_confidence);
-            pose.rt_matrix = getRTMatrix(rvec, tvec);
-
-            if (!pose.rt_matrix.empty())
-                markerPoses.push_back(pose);
-        }
-
+void PoseEstimationMarkerMapBase::estimatePose(std::vector<MarkerFiducials> &markerFiducials,
+                                               cv::Mat &camera_k, cv::Mat &camera_d,
+                                               std::vector<MarkerPose> &markerPoses) {
+    for (auto &estimator:estimators_) {
+        estimator.estimatePose(markerFiducials, camera_k, camera_d, markerPoses);
     }
 }
 
-PoseEstimationParameters &PoseEstimationBase::getParameters() {
+PoseEstimationMarkerMapParameters &PoseEstimationMarkerMapBase::getParameters() {
     return params_;
 }
 
-void PoseEstimationBase::refreshParameters() {
+void PoseEstimationMarkerMapBase::refreshParameters() {
 
 }

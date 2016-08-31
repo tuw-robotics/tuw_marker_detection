@@ -29,31 +29,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_estimation_node.h"
+#include "markermap/pose_estimation_markermap_node.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "arPoseEstimation");
     ros::NodeHandle n;
-    PoseEstimationNode poseEstimationNode(n);
+    PoseEstimationMarkerMapNode poseEstimationNode(n);
     ros::spin();
     return 0;
 }
 
-PoseEstimationNode::PoseEstimationNode(ros::NodeHandle &n) : n_(n) {
+PoseEstimationMarkerMapNode::PoseEstimationMarkerMapNode(ros::NodeHandle &n) : n_(n) {
     // Register dynamic_reconfigure callback
-    configCallbackFnct_ = boost::bind(&PoseEstimationNode::configCallback, this, _1, _2);
+    configCallbackFnct_ = boost::bind(&PoseEstimationMarkerMapNode::configCallback, this, _1, _2);
     configServer_.setCallback(configCallbackFnct_);
 
     // Advert marker publisher
     pub_markers_ = n_.advertise<marker_msgs::MarkerDetection>("markers", 10);
 
     // Subscribe to FiducialDetection.msg topic
-    fiducialDetectionSubscriber_ = n.subscribe("fiducials", 10, &PoseEstimationNode::fiducialDetectionCallback, this);
+    fiducialDetectionSubscriber_ = n.subscribe("fiducials", 10, &PoseEstimationMarkerMapNode::fiducialDetectionCallback, this);
 }
 
-PoseEstimationNode::~PoseEstimationNode() {}
+PoseEstimationMarkerMapNode::~PoseEstimationMarkerMapNode() {}
 
-void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg) {
+void PoseEstimationMarkerMapNode::fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg) {
 
     // Convert camera matrix msg to cv::Mat
     float camera_matrix_data[9];
@@ -67,7 +67,7 @@ void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDe
     cv::Mat camera_d = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
 
 
-    std::vector<MarkerFiducials> markers;
+    std::vector<MarkerFiducials> markerFiducials;
     for (auto &fiducial:msg->fiducial) {
         MarkerFiducials marker(fiducial.ids, fiducial.ids_confidence);
 
@@ -77,12 +77,12 @@ void PoseEstimationNode::fiducialDetectionCallback(const marker_msgs::FiducialDe
         for (auto &image_point:fiducial.image_points)
             marker.image_points.push_back(cv::Point2f(image_point.x, image_point.y));
 
-        markers.push_back(marker);
+        markerFiducials.push_back(marker);
     }
 
     // Do pose estimation
     std::vector<MarkerPose> markerPoses;
-    base_.estimatePose(markers, camera_k, camera_d, markerPoses);
+    base_.estimatePose(markerFiducials, camera_k, camera_d, markerPoses);
 
     // Publish ros messages
     publishMarkers(msg->header, markerPoses);
@@ -112,7 +112,7 @@ static tf::StampedTransform markerPoseToStampedTransform(MarkerPose &markerPose,
     return tf::StampedTransform(tf::Transform(rm, tv), ros::Time::now(), header.frame_id, markerLabel);
 }
 
-void PoseEstimationNode::publishMarkers(const std_msgs::Header &header, std::vector<MarkerPose> &markerPoses) {
+void PoseEstimationMarkerMapNode::publishMarkers(const std_msgs::Header &header, std::vector<MarkerPose> &markerPoses) {
     marker_msgs::MarkerDetection msg;
 
     msg.header = header;
@@ -150,7 +150,7 @@ void PoseEstimationNode::publishMarkers(const std_msgs::Header &header, std::vec
         pub_markers_.publish(msg);
 }
 
-void PoseEstimationNode::configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level) {
+void PoseEstimationMarkerMapNode::configCallback(tuw_marker_pose_estimation::MarkerPoseEstimationConfig &config, uint32_t level) {
     base_.getParameters().setPoseEstimatorType(config.pose_estimation_type);
     base_.getParameters().setPublishTf(config.publish_tf);
     base_.getParameters().setPublishMarkers(config.publish_markers);

@@ -40,13 +40,13 @@
 #include <dynamic_reconfigure/server.h>
 #include <tuw_marker_pose_estimation/MarkerPoseEstimationConfig.h>
 
-#include "pose_estimation_base.h"
+#include "markermap/pose_estimation_markermap_base.h"
 
-class PoseEstimationNode {
+class PoseEstimationMarkerMapNode {
 public:
-    PoseEstimationNode(ros::NodeHandle &n);
+    PoseEstimationMarkerMapNode(ros::NodeHandle &n);
 
-    ~PoseEstimationNode();
+    ~PoseEstimationMarkerMapNode();
 
 private:
     ros::NodeHandle n_;
@@ -59,7 +59,7 @@ private:
     dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig> configServer_;
     dynamic_reconfigure::Server<tuw_marker_pose_estimation::MarkerPoseEstimationConfig>::CallbackType configCallbackFnct_;
 
-    PoseEstimationBase base_;
+    PoseEstimationMarkerMapBase base_;
 
     void fiducialDetectionCallback(const marker_msgs::FiducialDetection::ConstPtr &msg);
 

@@ -13,8 +13,10 @@
 
 
     <node pkg="tuw_aruco" type="aruco_node" name="arMarkerAruco" output="screen">
-        <param name="pose_estimation_enabled" value="false"/>
-        <param name="publish_markers" value="false"/>
+        <param name="marker_dictonary" value="ARUCO_MIP_36h12"/>
+
+        <param name="pose_estimation_enabled" value="true"/>
+        <param name="publish_markers" value="true"/>
         <param name="publish_fiducials" value="true"/>
 
         <remap from="image" to="/camera/image_raw"/>
@@ -23,7 +25,7 @@
         <remap from="fiducials" to="/fiducialsAruco"/>
     </node>
 
-    <node pkg="tuw_marker_pose_estimation" type="pose_estimation_node" name="arPoseEstimation" output="screen">
+    <node pkg="tuw_marker_pose_estimation" type="pose_estimation_markermap_node" name="arPoseEstimation" output="screen" launch-prefix="gdb -ex run --args">
         <remap from="fiducials" to="/fiducialsAruco"/>
         <remap from="markers" to="/markersPoseEstimation"/>
     </node>

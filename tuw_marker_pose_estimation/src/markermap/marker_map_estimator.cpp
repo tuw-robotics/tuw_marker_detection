@@ -29,15 +29,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_estimation_base.h"
+#include "markermap/marker_map_estimator.h"
 
-#include "ros/ros.h"
+MarkerMapEstimator::MarkerMapEstimator(MarkerMapDetails details) : details_(details) {
 
-PoseEstimationBase::PoseEstimationBase() : params_() {
-    refreshParameters();
 }
-
-PoseEstimationBase::~PoseEstimationBase() {}
 
 static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
     if (_rvec.empty())
@@ -50,34 +46,64 @@ static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
     return m;
 }
 
-void PoseEstimationBase::estimatePose(std::vector<MarkerFiducials> &markers,
-                                      cv::Mat &camera_k, cv::Mat &camera_d,
-                                      std::vector<MarkerPose> &markerPoses) {
-    for (auto &marker:markers) {
-        // Currently we only support the default opencv pose estimation so the parameter PoseEstimatorType is not used.
-        // If you want to add additional methods than start to differentiate them here.
+void
+MarkerMapEstimator::estimatePose(std::vector<MarkerFiducials> &markerFiducials, cv::Mat &camera_k, cv::Mat &camera_d,
+                                 std::vector<MarkerPose> &markerPosesOutput) {
+
+    std::vector<cv::Point3f> object_points;
+    std::vector<cv::Point2f> image_points;
+
+    std::vector<MarkerFiducials>::iterator it = markerFiducials.begin();
+    while (it != markerFiducials.end()) {
+        MarkerFiducials &fiducial = *it;
+
+        // Only try to match if marker id is known
+        if (fiducial.ids.size() > 0) {
+            int id = fiducial.ids[0];
+
+            for (auto &markerDetails:details_.markers) {
+
+                // Only match ids for now, no type check is done
+                if (id == markerDetails.id) {
+
+                    // Just add these object/image points
+                    for (cv::Point3f &object_point:fiducial.object_points) {
+                        // FIXME: Not sure if we can't do this better than that...
+                        object_point = object_point +
+                                       cv::Point3f(markerDetails.position.getX(), markerDetails.position.getY(),
+                                                   markerDetails.position.getZ());
+                        object_points.push_back(object_point);
+                    }
+
+                    for (auto &image_point:fiducial.image_points)
+                        image_points.push_back(image_point);
+                }
+
+            }
+
+            // Remove fiducial element from list to avoid multiple use in another estimator
+            // Next element follows
+            it = markerFiducials.erase(it);
+        } else {
+            std::next(it);
+        }
+    }
+
+    // Estimate MarkerMap pose
+    if (image_points.size() > 2 && object_points.size() > 2) {
+        MarkerPose pose({details_.id}, {1});
         {
             cv::Mat rv, tv;
-            cv::solvePnP(marker.object_points, marker.image_points, camera_k, camera_d, rv, tv);
+            cv::solvePnP(object_points, image_points, camera_k, camera_d, rv, tv);
 
             cv::Mat rvec, tvec;
             rv.convertTo(rvec, CV_32F);
             tv.convertTo(tvec, CV_32F);
 
-            MarkerPose pose(marker.ids, marker.ids_confidence);
             pose.rt_matrix = getRTMatrix(rvec, tvec);
-
-            if (!pose.rt_matrix.empty())
-                markerPoses.push_back(pose);
         }
-
+        if (!pose.rt_matrix.empty())
+            markerPosesOutput.push_back(pose);
     }
-}
-
-PoseEstimationParameters &PoseEstimationBase::getParameters() {
-    return params_;
-}
-
-void PoseEstimationBase::refreshParameters() {
 
 }
