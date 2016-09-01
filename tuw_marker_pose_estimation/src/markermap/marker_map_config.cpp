@@ -33,7 +33,20 @@
 
 using namespace cv;
 
-MarkerDetails::MarkerDetails() {
+MarkerMapConfig MarkerMapConfig::readFromFile(std::string path) {
+    cv::FileStorage fs(path, cv::FileStorage::READ);
+    MarkerMapConfig markerMapConfig;
+    fs["markerMapConfig"] >> markerMapConfig;
+    return markerMapConfig;
+}
+
+void MarkerMapConfig::writeFromFile(std::string path, MarkerMapConfig markerMapConfig) {
+    cv::FileStorage fs(path, cv::FileStorage::WRITE);
+    fs << "markerMapConfig" << markerMapConfig;
+    fs.release();
+}
+
+MarkerDetails::MarkerDetails() : id(-1), type("") {
 
 }
 
@@ -47,9 +60,11 @@ void MarkerDetails::write(cv::FileStorage &fs) const {
 }
 
 void MarkerDetails::read(const cv::FileNode &node) {
-
+    this->id = (int) node["id"];
+    this->type = (std::string) node["type"];
+    node["position"] >> this->position;
+    node["rotation"] >> this->rotation;
 }
-
 
 MarkerMapDetails::MarkerMapDetails() {
 
@@ -73,7 +88,23 @@ void MarkerMapDetails::write(cv::FileStorage &fs) const {
 }
 
 void MarkerMapDetails::read(const cv::FileNode &node) {
+    this->id = (int) node["id"];
+    this->type = (std::string) node["type"];
 
+    FileNode markersNode = node["markers"];
+
+    // int markersArraySize = markersNode["size"]; // Size is ignored
+    FileNode dataNodes = markersNode["data"];
+    if (dataNodes.type() != FileNode::SEQ) {
+        return;
+    }
+
+    FileNodeIterator it = dataNodes.begin(), it_end = dataNodes.end();
+    for (; it != it_end; ++it) {
+        MarkerDetails markerDetails;
+        *it >> markerDetails;
+        this->markers.push_back(markerDetails);
+    }
 }
 
 
@@ -94,9 +125,16 @@ void MarkerMapConfig::write(cv::FileStorage &fs) const {
 }
 
 void MarkerMapConfig::read(const cv::FileNode &node) {
-    /*
-    int a = (int) node["A"];
-    int b = (int) node["X"];
-    int c = (int) node["id"];
-    */
+    // int markersArraySize = node["size"]; // Size is ignored
+    FileNode dataNodes = node["data"];
+    if (dataNodes.type() != FileNode::SEQ) {
+        return;
+    }
+
+    FileNodeIterator it = dataNodes.begin(), it_end = dataNodes.end();
+    for (; it != it_end; ++it) {
+        MarkerMapDetails markerMapDetails;
+        *it >> markerMapDetails;
+        this->markerMaps.push_back(markerMapDetails);
+    }
 }

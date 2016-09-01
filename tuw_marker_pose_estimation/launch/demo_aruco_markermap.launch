@@ -26,6 +26,8 @@
     </node>
 
     <node pkg="tuw_marker_pose_estimation" type="pose_estimation_markermap_node" name="arPoseEstimation" output="screen" launch-prefix="gdb -ex run --args">
+        <param name="marker_map_config" value="$(find tuw_marker_pose_estimation)/launch/demo_aruco_markermap_config.xml" />
+
         <remap from="fiducials" to="/fiducialsAruco"/>
         <remap from="markers" to="/markersPoseEstimation"/>
     </node>

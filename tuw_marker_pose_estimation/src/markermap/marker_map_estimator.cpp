@@ -51,7 +51,6 @@ static cv::Mat getRTMatrix(const cv::Mat &_rvec, const cv::Mat &_tvec) {
 void
 MarkerMapEstimator::estimatePose(std::vector<MarkerFiducials> &markerFiducials, cv::Mat &camera_k, cv::Mat &camera_d,
                                  std::vector<MarkerPose> &markerPosesOutput) {
-    ROS_INFO("estimatePose");
     std::vector<cv::Point3f> object_points;
     std::vector<cv::Point2f> image_points;
 

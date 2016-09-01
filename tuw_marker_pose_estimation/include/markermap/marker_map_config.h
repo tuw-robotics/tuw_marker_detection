@@ -8,17 +8,23 @@
 #include "opencv2/opencv.hpp"
 
 class MarkerMapDetails;
+
 class MarkerDetails;
 
 class MarkerMapConfig {
 
 public:
-    std::vector <MarkerMapDetails> markerMaps;
+    std::vector<MarkerMapDetails> markerMaps;
 
     MarkerMapConfig();
 
-    void write(cv::FileStorage& fs) const;
-    void read(const cv::FileNode& node);
+    void write(cv::FileStorage &fs) const;
+
+    void read(const cv::FileNode &node);
+
+    static MarkerMapConfig readFromFile(std::string path);
+
+    static void writeFromFile(std::string path, MarkerMapConfig markerMapConfig);
 
 };
 
@@ -41,10 +47,11 @@ public:
 
     int id;
     std::string type;
-    std::vector <MarkerDetails> markers;
+    std::vector<MarkerDetails> markers;
 
-    void write(cv::FileStorage& fs) const;
-    void read(const cv::FileNode& node);
+    void write(cv::FileStorage &fs) const;
+
+    void read(const cv::FileNode &node);
 };
 
 static void write(cv::FileStorage &fs, const std::string &, const MarkerMapDetails &x) {
@@ -69,8 +76,9 @@ public:
 
     MarkerDetails();
 
-    void write(cv::FileStorage& fs) const;
-    void read(const cv::FileNode& node);
+    void write(cv::FileStorage &fs) const;
+
+    void read(const cv::FileNode &node);
 };
 
 static void write(cv::FileStorage &fs, const std::string &, const MarkerDetails &x) {

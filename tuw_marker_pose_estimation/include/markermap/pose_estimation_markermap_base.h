@@ -41,7 +41,7 @@
 
 class PoseEstimationMarkerMapBase {
 public:
-    PoseEstimationMarkerMapBase();
+    PoseEstimationMarkerMapBase(MarkerMapConfig markerMapConfig);
 
     ~PoseEstimationMarkerMapBase();
 
@@ -54,6 +54,8 @@ private:
     PoseEstimationMarkerMapParameters params_;
 
     std::vector<MarkerMapEstimator> estimators_;
+
+    MarkerMapConfig markerMapConfig_;
 
 };
 

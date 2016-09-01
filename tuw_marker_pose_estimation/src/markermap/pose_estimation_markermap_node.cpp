@@ -33,13 +33,81 @@
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "arPoseEstimation");
+
+    /*
+    {
+        cv::Mat translation = cv::Mat::zeros(1, 3, CV_32FC1);
+        cv::Mat rotation = cv::Mat::zeros(1, 4, CV_32FC1);
+        rotation.at<float>(0, 0) = 1.0f;
+
+        MarkerDetails markerTopLeft;
+        markerTopLeft.id = 85;
+        translation.at<float>(0, 0) = -0.036f;
+        translation.at<float>(0, 1) = 0.036f;
+        translation.copyTo(markerTopLeft.position);
+        rotation.copyTo(markerTopLeft.rotation);
+
+        MarkerDetails markerTopRight;
+        markerTopRight.id = 166;
+        translation.at<float>(0, 0) = 0.036f;
+        translation.at<float>(0, 1) = 0.036f;
+        translation.copyTo(markerTopRight.position);
+        rotation.copyTo(markerTopRight.rotation);
+
+        MarkerDetails markerBottomLeft;
+        markerBottomLeft.id = 161;
+        translation.at<float>(0, 0) = -0.036f;
+        translation.at<float>(0, 1) = -0.036f;
+        translation.copyTo(markerBottomLeft.position);
+        rotation.copyTo(markerBottomLeft.rotation);
+
+        MarkerDetails markerBottomRight;
+        markerBottomRight.id = 227;
+        translation.at<float>(0, 0) = 0.036f;
+        translation.at<float>(0, 1) = -0.036f;
+        translation.copyTo(markerBottomRight.position);
+        rotation.copyTo(markerBottomRight.rotation);
+
+        MarkerMapDetails markerMap;
+        markerMap.id = 1001;
+        markerMap.markers.push_back(markerTopLeft);
+        markerMap.markers.push_back(markerTopRight);
+        markerMap.markers.push_back(markerBottomLeft);
+        markerMap.markers.push_back(markerBottomRight);
+
+        MarkerMapConfig markerMapConfig;
+        markerMapConfig.markerMaps.push_back(markerMap);
+
+        cv::FileStorage fs("/home/privacy/Documents/ros/workspace_repo/test_marker_config.yml", cv::FileStorage::WRITE);
+        fs << "markerMapConfig" << markerMapConfig;
+        fs.release();
+    }
+    */
+
+
+    // Try to get config file path
+    std::string configPath;
+
+    ros::NodeHandle pn("~");
+    if (!pn.getParam("marker_map_config", configPath)) {
+        ROS_ERROR("Parameter marker_map_config (Path to config file) is not provided. This node can not be started without a valid MarkerMap config.");
+        return EXIT_FAILURE;
+    }
+
+    // Try to read config file
+    MarkerMapConfig markerMapConfig = MarkerMapConfig::readFromFile(configPath);
+    if (markerMapConfig.markerMaps.size() <= 0) {
+        ROS_ERROR("The provided MarkerMap config file (%s) is not existing, is invalid or contains not a single markerMap. This node can not be started without a valid MarkerMap config.", configPath.c_str());
+        return EXIT_FAILURE;
+    }
+
     ros::NodeHandle n;
-    PoseEstimationMarkerMapNode poseEstimationNode(n);
+    PoseEstimationMarkerMapNode poseEstimationNode(n, markerMapConfig);
     ros::spin();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
-PoseEstimationMarkerMapNode::PoseEstimationMarkerMapNode(ros::NodeHandle &n) : n_(n) {
+PoseEstimationMarkerMapNode::PoseEstimationMarkerMapNode(ros::NodeHandle &n, MarkerMapConfig markerMapConfig) : n_(n), base_(markerMapConfig) {
     // Register dynamic_reconfigure callback
     configCallbackFnct_ = boost::bind(&PoseEstimationMarkerMapNode::configCallback, this, _1, _2);
     configServer_.setCallback(configCallbackFnct_);

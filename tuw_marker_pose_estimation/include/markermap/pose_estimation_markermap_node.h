@@ -44,7 +44,7 @@
 
 class PoseEstimationMarkerMapNode {
 public:
-    PoseEstimationMarkerMapNode(ros::NodeHandle &n);
+    PoseEstimationMarkerMapNode(ros::NodeHandle &n, MarkerMapConfig markerMapConfig);
 
     ~PoseEstimationMarkerMapNode();
 
