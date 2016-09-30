@@ -1,0 +1,9 @@
+<launch>
+
+   <!-- laod camera -->
+  <include file="$(find tuw_uvc)/launch/general.launch" />
+  
+   <!-- laod detection -->
+  <include file="$(find tuw_aruco)/launch/single_marker_live.launch" />
+
+</launch>
