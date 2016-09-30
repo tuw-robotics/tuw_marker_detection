@@ -1,0 +1,45 @@
+<launch>
+
+    <arg name="device" default="1"/>
+    <arg name="show" default="false"/>
+
+    <node pkg="tuw_uvc" type="general_node" name="camera">
+        <param name="video_device" value="/dev/video$(arg device)"/>
+        <param name="show_camera_image" value="$(arg show)"/>
+        <param name="convert_image" value="1"/>
+        <param name="camera_info_url" value="file://$(find tuw_uvc)/cfg/trust.yml"/>
+        <param name="frame_id" value="camera"/>
+    </node>
+
+
+    <node pkg="tuw_aruco" type="aruco_node" name="arMarkerAruco" output="screen">
+        <param name="marker_size" value="0.05"/>
+        <param name="pose_estimation_enabled" value="false"/>
+        <param name="publish_markers" value="false"/>
+        <param name="publish_fiducials" value="true"/>
+
+        <remap from="image" to="/camera/image_raw"/>
+        <remap from="camera_info" to="/camera/camera_info"/>
+        <remap from="fiducials" to="/idFiducials"/>
+    </node>
+
+    <node pkg="tuw_ellipses" type="ellipses_node" name="ellipseMarker" output="screen">
+        <param name="show_camera_image" value="true"/>
+        <param name="debug" value="false"/>
+
+        <remap from="image" to="/camera/image_raw"/>
+        <remap from="camera_info" to="camera/camera_info"/>
+        <remap from="fiducials" to="/ellipseFiducials"/>
+    </node>
+
+    <node pkg="tuw_marker_pose_estimation" type="pose_estimation_combomarker_node" name="arPoseEstimation" output="screen">
+        <!--
+        <remap from="idFiducials" to="/idFiducials"/>
+        <remap from="ellipseFiducials" to="/ellipseFiducials"/>
+        -->
+        <remap from="markers" to="/markersPoseEstimation"/>
+    </node>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tuw_marker_pose_estimation)/rviz/demo_config.rviz" />
+
+</launch>

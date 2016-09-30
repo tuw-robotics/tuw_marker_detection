@@ -56,9 +56,20 @@ add_executable(pose_estimation_markermap_node
     src/marker_pose.cpp
 )
 
+add_executable(pose_estimation_combomarker_node
+    src/combomarker/pose_estimation_combomarker_node.cpp
+    src/marker_fiducials.cpp
+    src/marker_pose.cpp
+    src/pose_estimation_base.cpp
+    src/pose_estimation_parameters.cpp
+
+    src/combomarker/combo_marker_estimator.cpp
+)
+
 ## Add cmake target dependencies of the executable
 add_dependencies(pose_estimation_node ${PROJECT_NAME}_gencfg)
 add_dependencies(pose_estimation_markermap_node ${PROJECT_NAME}_gencfg)
+add_dependencies(pose_estimation_combomarker_node ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pose_estimation_node
@@ -66,6 +77,10 @@ target_link_libraries(pose_estimation_node
     ${OpenCV_LIBRARIES}
 )
 target_link_libraries(pose_estimation_markermap_node
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+)
+target_link_libraries(pose_estimation_combomarker_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )
