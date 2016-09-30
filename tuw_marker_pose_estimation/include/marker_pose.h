@@ -43,6 +43,8 @@ public:
 
     cv::Mat rt_matrix;
 
+    cv::Mat getRVec();
+    cv::Mat getTVec();
 };
 
 #endif //TUW_MARKER_POSE_ESTIMATION_MARKER_POSE_H

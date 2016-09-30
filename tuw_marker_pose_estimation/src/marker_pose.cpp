@@ -35,3 +35,13 @@ MarkerPose::MarkerPose(std::vector<int> ids, std::vector<double> ids_confidence)
         ids_confidence) {
 
 }
+
+cv::Mat MarkerPose::getRVec() {
+    cv::Mat rvec = cv::Mat::zeros(3, 1, CV_32FC1);
+    cv::Rodrigues(cv::Mat(rt_matrix, cv::Rect(0, 0, 3, 3)), rvec);
+    return rvec;
+}
+
+cv::Mat MarkerPose::getTVec() {
+    return cv::Mat(rt_matrix, cv::Rect(3, 0, 1, 3)).clone();
+}
