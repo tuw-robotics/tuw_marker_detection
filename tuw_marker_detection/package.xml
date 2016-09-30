@@ -41,7 +41,6 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>tuw_artoolkitplus</run_depend>
   <run_depend>tuw_ellipses</run_depend>
   <run_depend>tuw_aruco</run_depend>
   <run_depend>tuw_marker_pose_estimation</run_depend>

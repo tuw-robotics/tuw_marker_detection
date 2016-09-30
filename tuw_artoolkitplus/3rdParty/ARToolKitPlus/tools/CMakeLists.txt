@@ -1,5 +1,0 @@
-#add_subdirectory(CameraCalib)
-add_subdirectory(PATT_to_PPM)
-add_subdirectory(PPM_to_PATT)
-add_subdirectory(MirrorPatt)
-add_subdirectory(IdPatGen)
