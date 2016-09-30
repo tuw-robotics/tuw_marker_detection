@@ -44,6 +44,7 @@
 #include <tf/transform_broadcaster.h>
 #include <tuw_ellipses/ellipses_detection.h>
 #include <tuw_ellipses/markers.h>
+#include <marker_msgs/FiducialDetection.h>
 
 namespace tuw {
 
@@ -77,6 +78,7 @@ private: //functions
     void publishTf();
     void publishMarker (const std_msgs::Header &header);
     void publishPerceptions (const std_msgs::Header &header);
+    void publishFiducials (const std_msgs::Header &header);
     void createTransforms(const std_msgs::Header &header);
 private: // variables
     ros::NodeHandle n_;
@@ -85,6 +87,7 @@ private: // variables
     ros::Publisher pub_viz_marker_;
     ros::Publisher pub_ellipses_;
     ros::Publisher pub_perceptions_;
+    ros::Publisher pub_fiducials_;
     visualization_msgs::Marker msg_line_list_;
     image_transport::ImageTransport imageTransport_;
     image_transport::CameraSubscriber  sub_camera_;

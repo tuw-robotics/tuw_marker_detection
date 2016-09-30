@@ -55,6 +55,7 @@ void EllipsesDetectionNode::init() {
     sub_camera_ = imageTransport_.subscribeCamera( "image", 1, &EllipsesDetectionNode::imageCallback, this );
     pub_viz_marker_ =  n_.advertise<visualization_msgs::Marker>("visualization_marker", 1000);
     pub_perceptions_ =  n_.advertise<tuw_ellipses::TransformArrayStamped>("perceptions", 1000);
+    pub_fiducials_ = n_.advertise<marker_msgs::FiducialDetection>("fiducials", 1000);
 }
 
 void EllipsesDetectionNode::imageCallback(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::CameraInfoConstPtr& camer_info) {
@@ -90,6 +91,7 @@ void EllipsesDetectionNode::imageCallback(const sensor_msgs::ImageConstPtr& imag
     publishTf();
     publishPerceptions(image_msg->header);
     publishMarker(image_msg->header);
+    publishFiducials(image_msg->header);
 
     if (param()->show_camera_image) {
         cv::Mat img_debug;
@@ -211,4 +213,37 @@ void EllipsesDetectionNode::publishPerceptions (const std_msgs::Header &header) 
         pub_perceptions_.publish(msg);
     }
 
+}
+
+void EllipsesDetectionNode::publishFiducials(const std_msgs::Header &header) {
+    marker_msgs::FiducialDetection msg;
+    msg.header = header;
+    msg.camera_k = camera_info_->K;
+    msg.camera_d = camera_info_->D;
+
+    for (std::vector<Ellipse>::iterator it = ellipses_.begin(); it != ellipses_.end(); it++) {
+        Ellipse &e = *it;
+        if(e.detection != VALID) continue;
+
+        marker_msgs::Fiducial fiducial;
+
+        geometry_msgs::Point objectPoint;
+        objectPoint.x = 0.0f;
+        objectPoint.y = 0.0f;
+        objectPoint.z = 0.0f;
+        fiducial.object_points.push_back(objectPoint);
+
+        geometry_msgs::Point imagePoint;
+        imagePoint.x = e.boxEllipse.center.x;
+        imagePoint.y = e.boxEllipse.center.y;
+        imagePoint.z = 0.0f; // imagePoints are 2d
+        fiducial.image_points.push_back(imagePoint);
+
+        fiducial.ids.resize(0);
+        fiducial.ids_confidence.resize(0);
+
+        msg.fiducial.push_back(fiducial);
+    }
+
+    pub_fiducials_.publish(msg);
 }
