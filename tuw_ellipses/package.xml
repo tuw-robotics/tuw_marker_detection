@@ -6,7 +6,6 @@
     The package is able to estimate the pose of the circle related to the ellipse the circle diameter as well as the camera parameter are known.
     A dynamic reconfigure interface allows the user to tune the parameter of the system to ones needs.
     But be aware that the pose of a projected circle within a image (ellipse) has two solutions and only one is published as TF.
-    A costom message (v4r_msgs) publishes all the data as well as the pose ambiguity.
     </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
