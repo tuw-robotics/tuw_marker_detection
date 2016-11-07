@@ -53,6 +53,10 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
 
     // Subscribe to image topic
     cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
+    
+    if(base_.getParameters().getShowDebugImage()){
+      cv::namedWindow("aruco_node_debug", CV_WINDOW_NORMAL | CV_GUI_NORMAL);
+    }
 
 }
 
