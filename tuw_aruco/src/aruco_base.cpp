@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "aruco_base.hpp"
+#include "tuw_aruco/aruco_base.h"
 
 ArUcoBase::ArUcoBase() : params_() {
     refreshParameters();

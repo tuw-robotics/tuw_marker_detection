@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "aruco_parameters.hpp"
+#include "tuw_aruco/aruco_parameters.h"
 
 ArUcoParameters::ArUcoParameters() {
     dictionary_ = "ARTOOLKITPLUSBCH";

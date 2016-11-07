@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "aruco_node.hpp"
+#include "tuw_aruco/aruco_node.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "arMarker");

@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "aruco_marker_pose.hpp"
+#include "tuw_aruco/aruco_marker_pose.h"
 
 ArUcoMarkerPose::ArUcoMarkerPose(int markerId, cv::Mat rtMatrix) : markerId_(markerId), rtMatrix_(rtMatrix) {
 

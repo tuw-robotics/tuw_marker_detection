@@ -29,32 +29,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TUW_ARUCO_ARUCO_BASE_H
-#define TUW_ARUCO_ARUCO_BASE_H
+#ifndef TUW_ARUCO_ARUCO_NODE_H
+#define TUW_ARUCO_ARUCO_NODE_H
+
+#include "ros/ros.h"
+#include <image_transport/image_transport.h>
+#include <tf/transform_broadcaster.h>
+#include <marker_msgs/MarkerDetection.h>
+#include <marker_msgs/FiducialDetection.h>
+
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/highgui/highgui.hpp>
+
+#include <dynamic_reconfigure/server.h>
+#include <tuw_aruco/ArUcoConfig.h>
 
 #include "aruco.h"
-#include "aruco_parameters.hpp"
-#include "aruco_marker_pose.hpp"
-#include "opencv2/opencv.hpp"
+#include "tuw_aruco/aruco_base.h"
 
-class ArUcoBase {
+class ArUcoNode {
 public:
-    ArUcoBase();
+    ArUcoNode(ros::NodeHandle &n);
 
-    ~ArUcoBase();
-
-    void detectMarkers(vector<aruco::Marker> &markers, cv::Mat image);
-    void estimatePose(vector<ArUcoMarkerPose> &markerPoses, vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams);
-    ArUcoParameters &getParameters();
-    void refreshParameters();
+    ~ArUcoNode();
 
 private:
-    ArUcoParameters params_;
+    ros::NodeHandle n_;
 
-    aruco::MarkerDetector detector_;
-    std::map <uint32_t, aruco::MarkerPoseTracker> tracker_;
+    image_transport::ImageTransport imageTransport_;
+    image_transport::CameraSubscriber cameraSubscriber_;
 
+    tf::TransformBroadcaster transformBroadcaster_;
+    ros::Publisher pub_markers_;
+    ros::Publisher pub_fiducials_;
+
+    dynamic_reconfigure::Server<tuw_aruco::ArUcoConfig> configServer_;
+    dynamic_reconfigure::Server<tuw_aruco::ArUcoConfig>::CallbackType configCallbackFnct_;
+
+    ArUcoBase base_;
+
+    void imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_);
+
+    void publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses);
+
+    void publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
+
+    void configCallback(tuw_aruco::ArUcoConfig &config, uint32_t level);
 };
 
-
-#endif //TUW_ARUCO_ARUCO_BASE_H
+#endif // TUW_ARUCO_ARUCO_NODE_H
