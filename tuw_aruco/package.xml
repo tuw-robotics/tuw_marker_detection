@@ -5,9 +5,10 @@
   <description>This is a wrapper around the marker detection library ArUco.</description>
 
   <maintainer email="lukas.pfeifhofer@devlabs.pro">Lukas Pfeifhofer</maintainer>
+  <maintainer email="markus.bader@tuwien.ac.at">Markus Bader</maintainer>
 
   <license>BSD</license>
-  <author>Markus Bader</author> 
+  <author>Lukas Pfeifhofer</author> 
 
   <url type="website">http://wiki.ros.org/tuw_aruco</url>
 
