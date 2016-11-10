@@ -34,7 +34,6 @@
 
 #include "ros/ros.h"
 #include <nodelet/nodelet.h>
-#include "tuw_ellipses/ellipses.h"
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
 #include <dynamic_reconfigure/server.h>
@@ -60,6 +59,9 @@ public:
         std::string node_name;
         bool debug_freeze;
         bool show_camera_image;
+        bool publishTF;
+        bool publishMarker;
+        bool publishFiducials;
         int show_camera_image_waitkey;
         int image_skip;
         bool skip_second_tf;

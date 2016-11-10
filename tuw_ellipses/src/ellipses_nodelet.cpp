@@ -87,9 +87,9 @@ void EllipsesDetectionNode::imageCallback(const sensor_msgs::ImageConstPtr& imag
     createRings();
     createTransforms(image_msg->header);
     timeDetectionEnd_ = boost::posix_time::microsec_clock::local_time();
-    publishTf();
-    publishMarker(image_msg->header);
-    publishFiducials(image_msg->header);
+    if(param()->publishTF) publishTf();
+    if(param()->publishMarker) publishMarker(image_msg->header);
+    if(param()->publishFiducials) publishFiducials(image_msg->header);
 
     if (param()->show_camera_image) {
         cv::Mat img_debug;
@@ -177,7 +177,7 @@ void EllipsesDetectionNode::publishMarker (const std_msgs::Header &header) {
         msg.view_direction.w = 1; //TODO
         msg.fov_horizontal = 6; //TODO
         msg.fov_vertical = 0; //TODO
-        
+        msg.type = "ellipses";
         msg.markers.resize(markerTransforms_.size());
         std::list<tf::StampedTransform>::iterator it =  markerTransforms_.begin();
         for(size_t i = 0; i < markerTransforms_.size(); it++, i++) {
