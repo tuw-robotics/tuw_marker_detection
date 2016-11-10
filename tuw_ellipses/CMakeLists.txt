@@ -31,10 +31,7 @@ add_message_files(
   DIRECTORY msg
   FILES
   ellipse.msg
-  ellipses.msg
-  marker.msg
-  markers.msg
-  TransformArrayStamped.msg)
+  ellipses.msg)
   
 generate_messages(DEPENDENCIES geometry_msgs)
 

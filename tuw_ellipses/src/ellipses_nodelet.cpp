@@ -33,7 +33,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <image_geometry/pinhole_camera_model.h>
-#include <tuw_ellipses/TransformArrayStamped.h>
+#include <marker_msgs/MarkerDetection.h>
 
 #include <pluginlib/class_list_macros.h>
 PLUGINLIB_DECLARE_CLASS(tuw, EllipsesDetectionNode, tuw::EllipsesDetectionNode, nodelet::Nodelet)
@@ -53,8 +53,7 @@ const EllipsesDetectionNode::ParametersNode *EllipsesDetectionNode::param() {
 
 void EllipsesDetectionNode::init() {
     sub_camera_ = imageTransport_.subscribeCamera( "image", 1, &EllipsesDetectionNode::imageCallback, this );
-    pub_viz_marker_ =  n_.advertise<visualization_msgs::Marker>("visualization_marker", 1000);
-    pub_perceptions_ =  n_.advertise<tuw_ellipses::TransformArrayStamped>("perceptions", 1000);
+    pub_perceptions_ =  n_.advertise<marker_msgs::MarkerDetection>("marker", 1000);
     pub_fiducials_ = n_.advertise<marker_msgs::FiducialDetection>("fiducials", 1000);
 }
 
@@ -89,7 +88,6 @@ void EllipsesDetectionNode::imageCallback(const sensor_msgs::ImageConstPtr& imag
     createTransforms(image_msg->header);
     timeDetectionEnd_ = boost::posix_time::microsec_clock::local_time();
     publishTf();
-    publishPerceptions(image_msg->header);
     publishMarker(image_msg->header);
     publishFiducials(image_msg->header);
 
@@ -166,49 +164,35 @@ void EllipsesDetectionNode::publishTf() {
 }
 
 void EllipsesDetectionNode::publishMarker (const std_msgs::Header &header) {
-    msg_line_list_.header = header;
-    msg_line_list_.ns = "nomrals";
-    msg_line_list_.action = visualization_msgs::Marker::ADD;
-    msg_line_list_.pose.orientation.w = 1.0;
-    msg_line_list_.id = 0;
-    msg_line_list_.type = visualization_msgs::Marker::LINE_LIST;
-    msg_line_list_.scale.x = 0.01;
-    msg_line_list_.color.r = 1.0;
-    msg_line_list_.color.g = 0.0;
-    msg_line_list_.color.b = 0.0;
-    msg_line_list_.color.a = 1.0;
-    geometry_msgs::Point p0, p1;
-    for(unsigned int i = 0; i < 2; i++) {
-        msg_line_list_.points.clear();
-        msg_line_list_.ns = "nomrals-" + boost::lexical_cast<std::string>(i);
-        msg_line_list_.color.r = 0.5 + 0.5*i;
-        for(std::list<Marker>::iterator it = markers_.begin(); it != markers_.end(); it++) {
-            Marker &m = *it;
-            p0.x = m.translations[i].x, p0.y = m.translations[i].y, p0.z = m.translations[i].z;
-            p1.x = p0.x +  m.normals[i][0]/2., p1.y = p0.y + m.normals[i][1]/2., p1.z = p0.z + m.normals[i][2]/2.;
-            msg_line_list_.points.push_back(p0);
-            msg_line_list_.points.push_back(p1);
-        }
-        pub_viz_marker_.publish(msg_line_list_);
-    }
-}
-
-void EllipsesDetectionNode::publishPerceptions (const std_msgs::Header &header) {
     if(pub_perceptions_.getNumSubscribers() < 1) return;
-    tuw_ellipses::TransformArrayStamped msg;
+    marker_msgs::MarkerDetection msg;
     if(markerTransforms_.size() > 0) {
         msg.header = header;
-        msg.child_frame_id.resize(markerTransforms_.size());
-        msg.transform.resize(markerTransforms_.size());
+        msg.distance_min =  0; //TODO
+        msg.distance_max =  8; //TODO
+        msg.distance_max_id = 5; //TODO
+        msg.view_direction.x = 0; //TODO
+        msg.view_direction.y = 0; //TODO
+        msg.view_direction.z = 0; //TODO
+        msg.view_direction.w = 1; //TODO
+        msg.fov_horizontal = 6; //TODO
+        msg.fov_vertical = 0; //TODO
+        
+        msg.markers.resize(markerTransforms_.size());
         std::list<tf::StampedTransform>::iterator it =  markerTransforms_.begin();
-        for(unsigned int i; i < markerTransforms_.size(); it++, i++) {
-            geometry_msgs::Vector3 &desT = msg.transform[i].translation;
-            geometry_msgs::Quaternion &desQ = msg.transform[i].rotation;
+        for(size_t i = 0; i < markerTransforms_.size(); it++, i++) {
+            marker_msgs::Marker &marker = msg.markers[i];
+            // marker.ids              ellipses have no id
+            // marker.ids_confidence   ellipses have no id
             tf::Vector3 &srcT = it->getOrigin();
+            marker.pose.position.x = srcT.x();
+            marker.pose.position.y = srcT.y();
+            marker.pose.position.z = srcT.z();
             tf::Quaternion srcQ = it->getRotation();
-            desT.x = srcT.x(), desT.y = srcT.y(), desT.z = srcT.z();
-            desQ.x = srcQ.x(), desQ.y = srcQ.y(), desQ.z = srcQ.z(), desQ.w = srcQ.w();
-            msg.child_frame_id[i] = it->child_frame_id_;
+            marker.pose.orientation.x = srcQ.x();
+            marker.pose.orientation.y = srcQ.y();
+            marker.pose.orientation.z = srcQ.z();
+            marker.pose.orientation.w = srcQ.w();
         }
         pub_perceptions_.publish(msg);
     }
