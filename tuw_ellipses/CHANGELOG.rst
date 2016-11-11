@@ -2,8 +2,8 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.4 (2016-11-11)
+------------------
 * dynamic reconfiger compile order fixed for ellipses_nodelet
 * Contributors: Markus Bader @ munin
 
