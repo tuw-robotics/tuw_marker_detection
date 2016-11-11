@@ -2,8 +2,8 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2016-11-11)
+------------------
 * cmake_modules to package xml added
 * flags added to eaktivate publishing
 * ellipses are publishing marker_msgs
