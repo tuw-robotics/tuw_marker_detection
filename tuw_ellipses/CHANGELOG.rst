@@ -2,10 +2,15 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* DynamicReconfigure files naming fixed
+* Contributors: Markus Bader
+
 0.0.4 (2016-11-11)
 ------------------
 * dynamic reconfiger compile order fixed for ellipses_nodelet
-* Contributors: Markus Bader @ munin
+* Contributors: Markus Bader
 
 0.0.3 (2016-11-11)
 ------------------
