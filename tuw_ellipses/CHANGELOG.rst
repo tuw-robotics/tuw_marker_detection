@@ -2,6 +2,14 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* cmake_modules to package xml added
+* flags added to eaktivate publishing
+* ellipses are publishing marker_msgs
+* minor changes to fix jenkins build error
+* Contributors: Markus Bader
+
 0.0.2 (2016-11-07)
 ------------------
 * Initial commit
