@@ -21,8 +21,7 @@
   <build_depend>image_geometry</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>tf</build_depend>
-  <build_depend>cv_bridge</build_depend>
-  <build_depend>opencv3</build_depend>
+  <build_depend>cv_bridge</build_depend> 
   <build_depend>marker_msgs</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
 
@@ -33,7 +32,6 @@
   <run_depend>image_transport</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>cv_bridge</run_depend>
-  <run_depend>opencv3</run_depend>
   <run_depend>marker_msgs</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
 

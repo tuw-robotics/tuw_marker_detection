@@ -39,9 +39,8 @@
 //
 //M*/
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/core/internal.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core.hpp>
 
 namespace tuw {
 CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr,
@@ -90,7 +89,8 @@ CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void
     if( (aperture_size & 1) == 0 || aperture_size < 3 || aperture_size > 7 )
         CV_Error( CV_StsBadFlag, "" );
 
-    size = cvGetMatSize( src );
+    size.width = src->cols;
+    size.height = src->rows;
 
     // dx = cvCreateMat( size.height, size.width, CV_16SC1 );  // Removed by Markus Bader
     // dy = cvCreateMat( size.height, size.width, CV_16SC1 );  // Removed by Markus Bader

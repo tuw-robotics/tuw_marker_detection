@@ -27,7 +27,7 @@ add_subdirectory(${ARUCO_LIB_DIR})
 
 ## Generate dynamic reconfigure parameters
 generate_dynamic_reconfigure_options(
-        cfg/parameter.cfg
+        cfg/ArUco.cfg
 )
 
 ## The catkin_package macro generates cmake config files for your package

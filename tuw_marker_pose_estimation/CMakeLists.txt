@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
     rospy
     std_msgs
     image_geometry
-    image_transport
     tf
     cv_bridge
     marker_msgs
@@ -21,8 +20,8 @@ find_package( OpenCV REQUIRED )
 
 ## Generate dynamic reconfigure parameters
 generate_dynamic_reconfigure_options(
-        cfg/parameter.cfg
-        cfg/parameter_markermap.cfg
+        cfg/MarkerPoseEstimation.cfg
+        cfg/MarkerMapPoseEstimation.cfg
 )
 
 ## The catkin_package macro generates cmake config files for your package
