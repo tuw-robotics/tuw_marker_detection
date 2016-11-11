@@ -2,6 +2,11 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* dynamic reconfiger compile order fixed for ellipses_nodelet
+* Contributors: Markus Bader @ munin
+
 0.0.3 (2016-11-11)
 ------------------
 * cmake_modules to package xml added

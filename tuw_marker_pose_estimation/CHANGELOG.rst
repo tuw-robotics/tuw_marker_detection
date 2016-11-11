@@ -2,6 +2,9 @@
 Changelog for package tuw_marker_pose_estimation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.0.3 (2016-11-11)
 ------------------
 

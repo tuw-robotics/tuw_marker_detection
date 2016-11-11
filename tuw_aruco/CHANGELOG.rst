@@ -2,6 +2,9 @@
 Changelog for package tuw_aruco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.0.3 (2016-11-11)
 ------------------
 * Scalable window
