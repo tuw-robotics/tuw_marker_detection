@@ -7,8 +7,8 @@ project(tuw_ellipses)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   dynamic_reconfigure
-  image_geometry
   image_transport
+  image_geometry
   geometry_msgs
   roscpp
   rospy

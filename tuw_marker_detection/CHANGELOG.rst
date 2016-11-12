@@ -2,6 +2,9 @@
 Changelog for package tuw_marker_detection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.0.5 (2016-11-11)
 ------------------
 
