@@ -4,6 +4,8 @@ Changelog for package tuw_marker_pose_estimation
 
 Forthcoming
 -----------
+* was missing in image_geometry package.xml added
+* Contributors: Markus Bader
 
 0.0.5 (2016-11-11)
 ------------------

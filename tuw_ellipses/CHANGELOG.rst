@@ -4,6 +4,8 @@ Changelog for package tuw_ellipses
 
 Forthcoming
 -----------
+* image_geometry was missing in package.xml
+* Contributors: Markus Bader
 
 0.0.5 (2016-11-11)
 ------------------
