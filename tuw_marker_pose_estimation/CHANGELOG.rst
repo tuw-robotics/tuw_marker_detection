@@ -2,6 +2,11 @@
 Changelog for package tuw_marker_pose_estimation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* maintainer changed to Markus Bader 
+* Contributors: Markus Bader
+
 0.0.6 (2016-11-12)
 ------------------
 

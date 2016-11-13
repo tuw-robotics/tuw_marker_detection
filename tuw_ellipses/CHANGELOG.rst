@@ -2,6 +2,11 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added eigen as build dependency to tuw_ellipses
+* Contributors: Markus Bader
+
 0.0.6 (2016-11-12)
 ------------------
 * image_geometry was missing in package.xml
