@@ -4,7 +4,7 @@
   <version>0.0.6</version>
   <description>This node does pose estimation for detected fiducials (marker_msgs/FiducialDetection.msg)</description>
 
-  <maintainer email="lukas.pfeifhofer@devlabs.pro">Lukas Pfeifhofer</maintainer>
+  <maintainer email="markus.bader@tuwien.ac.at">Markus Bader</maintainer>
 
   <license>BSD</license>
   <author>Lukas Pfeifhofer</author> 
