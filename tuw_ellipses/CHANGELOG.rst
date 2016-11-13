@@ -2,8 +2,8 @@
 Changelog for package tuw_ellipses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.7 (2016-11-13)
+------------------
 * Added eigen as build dependency to tuw_ellipses
 * Contributors: Markus Bader
 
