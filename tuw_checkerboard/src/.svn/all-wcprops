@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/v4r/!svn/ver/2593/trunk/ros/fiducials/checkerboard_detection/src
+END
+static_pose.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/v4r/!svn/ver/735/trunk/ros/fiducials/checkerboard_detection/src/static_pose.cpp
+END
+estimate_pose.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/v4r/!svn/ver/743/trunk/ros/fiducials/checkerboard_detection/src/estimate_pose.cpp
+END

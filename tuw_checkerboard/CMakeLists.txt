@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
+link_libraries(${OpenCV_LIBS})
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -106,10 +108,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tuw_checkerboard
-#  CATKIN_DEPENDS cv_bridge dynamic_reconfigure image_geometry image_transport marker_msgs nodelet roscpp rospy tf
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES tuw_checkerboard
+  CATKIN_DEPENDS cv_bridge dynamic_reconfigure image_geometry image_transport marker_msgs nodelet roscpp rospy tf
+  DEPENDS OpenCV
 )
 
 ###########
@@ -118,20 +120,20 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(tuw_checkerboard
-#   src/${PROJECT_NAME}/tuw_checkerboard.cpp
-# )
+add_library(tuw_checkerboard
+  src/${PROJECT_NAME}/checkerboard.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(tuw_checkerboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_checkerboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 # add_executable(tuw_checkerboard_node src/tuw_checkerboard_node.cpp)
@@ -141,9 +143,9 @@ include_directories(
 # add_dependencies(tuw_checkerboard_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(tuw_checkerboard_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(tuw_checkerboard
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
