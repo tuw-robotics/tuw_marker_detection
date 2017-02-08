@@ -51,6 +51,19 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
         ROS_ERROR ( "[camera_tf_node] Failed to convert image" );
         return;
     }
+    
+    marker_detection_.header = image_msg->header;
+    marker_detection_.distance_min =  0; //TODO
+    marker_detection_.distance_max =  8; //TODO
+    marker_detection_.distance_max_id = 5; //TODO
+    marker_detection_.view_direction.x = 0; //TODO
+    marker_detection_.view_direction.y = 0; //TODO
+    marker_detection_.view_direction.z = 0; //TODO
+    marker_detection_.view_direction.w = 1; //TODO
+    marker_detection_.fov_horizontal = 6; //TODO
+    marker_detection_.fov_vertical = 0; //TODO
+    
+    
     int flags = 0;
     if(config_.adaptive_thresh) flags += CV_CALIB_CB_ADAPTIVE_THRESH;
     if(config_.normalize_image) flags += CV_CALIB_CB_NORMALIZE_IMAGE;
@@ -74,8 +87,14 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
         }
 
         cam_model_.fromCameraInfo ( info_msg );
-        Mat camera_matrix = Mat ( cam_model_.intrinsicMatrix() );
-        Mat dist_coeff = cam_model_.distortionCoeffs();
+	Mat camera_matrix = Mat(cam_model_.intrinsicMatrix());
+	Mat dist_coeff = Mat(cam_model_.distortionCoeffs());
+	
+	if (config_.imput_raw == false){
+	  Mat projection_matrix = Mat ( cam_model_.projectionMatrix());
+	  camera_matrix = projection_matrix(cv::Rect(0,0,3,3));
+	  dist_coeff = Mat::zeros(1,5,CV_32F);
+	}
         Vec3d rotation_vec;
         Vec3d translation_vec;
 
@@ -90,12 +109,12 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
                           rotation_mat.at<double> ( 1, 0 ), rotation_mat.at<double> ( 1, 1 ), rotation_mat.at<double> ( 1, 2 ),
                           rotation_mat.at<double> ( 2, 0 ), rotation_mat.at<double> ( 2, 1 ), rotation_mat.at<double> ( 2, 2 ) );
 
-        tf::Vector3 T = tf::Vector3 ( translation_vec ( 0 ), translation_vec ( 1 ), translation_vec ( 2 ) );
+        tf::Vector3 t( translation_vec ( 0 ), translation_vec ( 1 ), translation_vec ( 2 ) );
 
-        tf::Transform cam_to_checker ( R, T );
+        tf::Transform cam_to_checker ( R, t );
         
         if(config_.plubishTF){
-            tf_broadcaster_->sendTransform(tf::StampedTransform(cam_to_checker, image_msg->header.stamp, checkerboard_frame_id_, image_msg->header.frame_id));
+            tf_broadcaster_->sendTransform(tf::StampedTransform(cam_to_checker, image_msg->header.stamp, image_msg->header.frame_id, checkerboard_frame_id_));
         }
     }
 
@@ -108,6 +127,42 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
 
     //pub_image_.publish(input_bridge->toImageMsg());
 }
+
+/*
+void CheckerboardNode::publishMarker (const std_msgs::Header &header) {
+    if(pub_perceptions_.getNumSubscribers() < 1) return;
+    marker_msgs::MarkerDetection msg;
+    if(markerTransforms_.size() > 0) {
+        msg.header = header;
+        msg.distance_min =  0; //TODO
+        msg.distance_max =  8; //TODO
+        msg.distance_max_id = 5; //TODO
+        msg.view_direction.x = 0; //TODO
+        msg.view_direction.y = 0; //TODO
+        msg.view_direction.z = 0; //TODO
+        msg.view_direction.w = 1; //TODO
+        msg.fov_horizontal = 6; //TODO
+        msg.fov_vertical = 0; //TODO
+        msg.type = "ellipses";
+        msg.markers.resize(markerTransforms_.size());
+        std::list<tf::StampedTransform>::iterator it =  markerTransforms_.begin();
+        for(size_t i = 0; i < markerTransforms_.size(); it++, i++) {
+            marker_msgs::Marker &marker = msg.markers[i];
+            // marker.ids              ellipses have no id
+            // marker.ids_confidence   ellipses have no id
+            tf::Vector3 &srcT = it->getOrigin();
+            marker.pose.position.x = srcT.x();
+            marker.pose.position.y = srcT.y();
+            marker.pose.position.z = srcT.z();
+            tf::Quaternion srcQ = it->getRotation();
+            marker.pose.orientation.x = srcQ.x();
+            marker.pose.orientation.y = srcQ.y();
+            marker.pose.orientation.z = srcQ.z();
+            marker.pose.orientation.w = srcQ.w();
+        }
+        pub_perceptions_.publish(msg);
+    }
+}*/
 
 int main ( int argc, char** argv ) {
     ros::init ( argc, argv, "tuw_checkerboard" );

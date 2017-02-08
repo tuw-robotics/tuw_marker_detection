@@ -34,6 +34,7 @@ private:
   cv::Mat image_rgb_;
   tuw_checkerboard::CheckerboardDetectionConfig config_;
   std::string checkerboard_frame_id_;
+  marker_msgs::MarkerDetection marker_detection_;
   
   
   void callbackCamera(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::CameraInfoConstPtr& info_msg);
