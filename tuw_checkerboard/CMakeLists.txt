@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   cv_bridge
+  dynamic_reconfigure
   image_geometry
   image_transport
   image_view
@@ -71,7 +72,7 @@ find_package(OpenCV REQUIRED)
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   marker_msgs
 # )
 
 ################################################
