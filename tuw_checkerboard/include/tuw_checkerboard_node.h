@@ -16,7 +16,7 @@
 #include <tuw_checkerboard/CheckerboardDetectionConfig.h>
 
 
-class CheckerboardNode
+class CheckerboardNode 
 {
 public:
   CheckerboardNode(); // Constructor
@@ -35,6 +35,12 @@ private:
   tuw_checkerboard::CheckerboardDetectionConfig config_;
   std::string checkerboard_frame_id_;
   marker_msgs::MarkerDetection marker_detection_;
+  std::vector<cv::Point2f> image_corners_;
+  std::vector<cv::Point3f> object_corners_;
+  cv::Mat_<double> intrinsic_matrix_;
+  cv::Mat_<double> extrinsic_matrix_;
+  cv::Mat_<double> projection_matrix_;
+  tf::Transform transform_;
   
   
   void callbackCamera(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::CameraInfoConstPtr& info_msg);
