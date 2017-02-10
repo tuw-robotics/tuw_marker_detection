@@ -84,7 +84,11 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
     cv_bridge::CvImagePtr input_bridge;
     try {
         input_bridge = cv_bridge::toCvCopy ( image_msg, sensor_msgs::image_encodings::MONO8 );
-        image_grey_ = input_bridge->image;
+        if(config_.rotate_camera_image_180) {
+            cv::flip(input_bridge->image, image_grey_, -1);
+        } else {
+            image_grey_ = input_bridge->image;
+        }
         cvtColor ( image_grey_, image_rgb_, CV_GRAY2BGR, 0 );
 
     } catch ( cv_bridge::Exception& ex ) {
@@ -114,7 +118,7 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
         Mat camera_matrix = Mat ( cam_model_.intrinsicMatrix() );
         Mat dist_coeff = Mat ( cam_model_.distortionCoeffs() );
 
-        if ( config_.imput_raw == false ) {
+        if ( config_.input_raw == false ) {
             Mat projection_matrix = Mat ( cam_model_.projectionMatrix() );
             camera_matrix = projection_matrix ( cv::Rect ( 0,0,3,3 ) );
             dist_coeff = Mat::zeros ( 1,5,CV_32F );
