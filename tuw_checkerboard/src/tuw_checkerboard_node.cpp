@@ -1,3 +1,35 @@
+/***************************************************************************
+ * Copyright (c) 2017 
+ * Florian Beck <florian.beck@tuwien.ac.at>
+ * Markus Bader <markus.bader@tuwien.ac.at>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *    This product includes software developed by the TU-Wien.
+ * 4. Neither the name of the TU-Wien nor the
+ *    names of its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY Markus Bader ''AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL Markus Bader BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ***************************************************************************/
+
 #include "tuw_checkerboard_node.h"
 
 #include <cv_bridge/cv_bridge.h>
@@ -99,19 +131,7 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
         double f = ( fx+fy ) /2.;
 
 
-        marker_detection_.header = image_msg->header;
-        marker_detection_.distance_min = ( f*config_.checkerboard_square_size* ( config_.checkerboard_columns+1 ) ) / ( 2.0*cx );
-        marker_detection_.distance_max = ( f*config_.checkerboard_square_size ) /config_.checkerboard_min_square_size;
-        marker_detection_.distance_max_id = 0; //TODO
-        marker_detection_.view_direction.x = 0; //TODO
-        marker_detection_.view_direction.y = 0; //TODO
-        marker_detection_.view_direction.z = 0; //TODO
-        marker_detection_.view_direction.w = 1; //TODO
-        marker_detection_.fov_horizontal = 2.0 * atan2 ( cx, fx );
-        marker_detection_.fov_vertical = 2.0 * atan2 ( cy, fy );
-        marker_detection_.type = "checkerboard";
-        marker_detection_.markers.resize ( 1 );
-        marker_msgs::Marker &marker =  marker_detection_.markers[0];
+
 
 
         Vec3d rotation_vec;
@@ -128,18 +148,32 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
         projection_matrix_ = intrinsic_matrix_ * extrinsic_matrix_;
 
         // generate tf model to camera
-        tf::Matrix3x3 R ( extrinsic_matrix_.at<double> ( 0, 0 ), extrinsic_matrix_.at<double> ( 0, 1 ), extrinsic_matrix_.at<double> ( 0, 2 ),
-                          extrinsic_matrix_.at<double> ( 1, 0 ), extrinsic_matrix_.at<double> ( 1, 1 ), extrinsic_matrix_.at<double> ( 1, 2 ),
-                          extrinsic_matrix_.at<double> ( 2, 0 ), extrinsic_matrix_.at<double> ( 2, 1 ), extrinsic_matrix_.at<double> ( 2, 2 ) );
+        tf::Matrix3x3 R ( extrinsic_matrix_( 0, 0 ), extrinsic_matrix_( 0, 1 ), extrinsic_matrix_( 0, 2 ),
+                          extrinsic_matrix_( 1, 0 ), extrinsic_matrix_( 1, 1 ), extrinsic_matrix_( 1, 2 ),
+                          extrinsic_matrix_( 2, 0 ), extrinsic_matrix_( 2, 1 ), extrinsic_matrix_( 2, 2 ) );
 
         tf::Vector3 t ( translation_vec ( 0 ), translation_vec ( 1 ), translation_vec ( 2 ) );
         transform_ =  tf::Transform ( R, t );
         tf::Quaternion q = transform_.getRotation();
 
-        if ( config_.plubishTF ) {
+        if ( config_.plubish_tf ) {
             tf_broadcaster_->sendTransform ( tf::StampedTransform ( transform_, image_msg->header.stamp, image_msg->header.frame_id, checkerboard_frame_id_ ) );
         }
-        if ( config_.plubishMarker ) {
+        if ( config_.plubish_marker ) {
+            marker_detection_.header = image_msg->header;
+            marker_detection_.distance_min = ( f*config_.checkerboard_square_size* ( config_.checkerboard_columns+1 ) ) / ( 2.0*cx );
+            marker_detection_.distance_max = ( f*config_.checkerboard_square_size ) /config_.checkerboard_min_square_size;
+            marker_detection_.distance_max_id = 0; //TODO
+            marker_detection_.view_direction.x = 0; //TODO
+            marker_detection_.view_direction.y = 0; //TODO
+            marker_detection_.view_direction.z = 0; //TODO
+            marker_detection_.view_direction.w = 1; //TODO
+            marker_detection_.fov_horizontal = 2.0 * atan2 ( cx, fx );
+            marker_detection_.fov_vertical = 2.0 * atan2 ( cy, fy );
+            marker_detection_.type = "checkerboard";
+            marker_detection_.markers.resize ( 1 );
+            marker_msgs::Marker &marker =  marker_detection_.markers[0];
+
             marker.pose.orientation.x = q.x();
             marker.pose.orientation.y = q.y();
             marker.pose.orientation.z = q.z();
@@ -149,38 +183,75 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
             marker.pose.position.z = t.z();
             pub_markers_.publish ( marker_detection_ );
         }
+        if ( config_.publish_fiducials ) {
+            fiducial_detection_.header = image_msg->header;
+            fiducial_detection_.camera_d.resize(5);
+            for (size_t i = 0; i < 5; i++)
+                fiducial_detection_.camera_d[i] = dist_coeff.at<double> (0,i);
+            for (size_t r = 0; r < 3; r++)
+                for (size_t c = 0; c < 3; c++) 
+                    fiducial_detection_.camera_k[r*3+c] = intrinsic_matrix_ ( r, c );
+            fiducial_detection_.type = "checkerboard";
+            fiducial_detection_.fiducial.resize ( 1 );
+            marker_msgs::Fiducial &fiducial =  fiducial_detection_.fiducial[0];
+            fiducial.object_points.resize(object_corners_.size());
+            fiducial.image_points.resize(image_corners_.size());
+            for (size_t i = 0; i < object_corners_.size(); i++){
+                fiducial.object_points[i].x = object_corners_[i].x;
+                fiducial.object_points[i].y = object_corners_[i].y;
+                fiducial.object_points[i].z = object_corners_[i].z;
+                
+                fiducial.image_points[i].x = image_corners_[i].x;
+                fiducial.image_points[i].y = image_corners_[i].y;
+            }
+            pub_fiducials_.publish ( fiducial_detection_ );
+        }
+        if ( config_.publish_pose ) {
+            geometry_msgs::PoseStamped pose;
+            pose.header = image_msg->header;
+            pose.pose.orientation.x = q.x();
+            pose.pose.orientation.y = q.y();
+            pose.pose.orientation.z = q.z();
+            pose.pose.orientation.w = q.w();
+            pose.pose.position.x = t.x();
+            pose.pose.position.y = t.y();
+            pose.pose.position.z = t.z();
+            pub_pose_.publish(pose);
+        }
         if ( config_.show_camera_image ) {
 
-
-            double crossSize = std::min ( config_.checkerboard_square_size * config_.checkerboard_columns, config_.checkerboard_square_size * config_.checkerboard_rows );
+            double square_size = config_.checkerboard_square_size;
+            double nr_of_square =  std::max ( config_.checkerboard_columns, config_.checkerboard_rows );
+            double size =  square_size * nr_of_square;
 
             int font = cv::FONT_HERSHEY_SIMPLEX;
             double fontScale = 1.0;
             double thickness = 1.0;
             double lineType = CV_AA;
-            
+            double lineThickness = 3;
+
             cv::Mat_<double> Pi0 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, 0, 0, 1 );
             cv::Point2d pi0 ( Pi0 ( 0,0 ) / Pi0 ( 0,2 ), Pi0 ( 0,1 ) / Pi0 ( 0,2 ) );
             cv::circle ( image_rgb_, pi0, 3, CV_RGB ( 255,255,255 ) );
 
-            cv::Mat_<double> Pi1 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << crossSize, 0, 0, 1 );;
+            cv::Mat_<double> Pi1 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << size, 0, 0, 1 );;
             cv::Point2d pi1 ( Pi1 ( 0,0 ) / Pi1 ( 0,2 ), Pi1 ( 0,1 ) / Pi1 ( 0,2 ) );
             cv::circle ( image_rgb_, pi1, 3, CV_RGB ( 255,0,0 ) );
             putText ( image_rgb_, "X", pi1, font, fontScale, CV_RGB ( 255,0,0 ), thickness, CV_AA );
+            cv::line ( image_rgb_, pi0, pi1, CV_RGB ( 255,0,0 ), lineThickness );
 
-            cv::Mat_<double> Pi2 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, crossSize, 0, 1 );
+            cv::Mat_<double> Pi2 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, size, 0, 1 );
             cv::Point2d pi2 ( Pi2 ( 0,0 ) / Pi2 ( 0,2 ), Pi2 ( 0,1 ) / Pi2 ( 0,2 ) );
             cv::circle ( image_rgb_, pi2, 3, CV_RGB ( 0,255,0 ) );
             putText ( image_rgb_, "Y", pi2, font, fontScale, CV_RGB ( 0,255,0 ), thickness, CV_AA );
+            cv::line ( image_rgb_, pi0, pi2, CV_RGB ( 0,255,0 ), lineThickness );
 
-            cv::Mat_<double> Pi3 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, 0, crossSize, 1 );
+            cv::Mat_<double> Pi3 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, 0, size, 1 );
             cv::Point2d pi3 ( Pi3 ( 0,0 ) / Pi3 ( 0,2 ), Pi3 ( 0,1 ) / Pi3 ( 0,2 ) );
             cv::circle ( image_rgb_, pi3, 3, CV_RGB ( 0,0,255 ) );
             putText ( image_rgb_, "Z", pi3, font, fontScale, CV_RGB ( 0,0,255 ) , thickness, CV_AA );
+            cv::line ( image_rgb_, pi0, pi3, CV_RGB ( 0,0,255 ), lineThickness );
 
-            cv::line ( image_rgb_, pi0, pi1, CV_RGB ( 255,0,0 ), 5 );
-            cv::line ( image_rgb_, pi0, pi2, CV_RGB ( 0,255,0 ), 5 );
-            cv::line ( image_rgb_, pi0, pi3, CV_RGB ( 0,0,255 ), 5 );
         }
     }
     if ( config_.show_camera_image ) {
