@@ -1,6 +1,28 @@
 <launch>
-  <arg name="color_image" default="/camera/rgb/image_raw"/>  
+  <arg name="color_image" default="/camera/rgb/image_raw"/>
+  <arg name="image_out" default="image_out"/>
+  <arg name="checkerboard_size_col" default="7"/>
+  <arg name="checkerboard_size_row" default="5"/>
+  <arg name="checkerboard_square_size" default="0.03"/>
+  <arg name="laser_height" default="0.3"/>
+  <arg name="checker_height" default="1.325"/>
+  <arg name="checker_y" default="0.505"/>
+  <arg name="rotate_image_180" default="false"/>
+  
   <node name="tuw_checkerboard_node" pkg="tuw_checkerboard" type="tuw_checkerboard_node" output="screen">
       <remap from="image" to="$(arg color_image)" />
+      <param name="checkerboard_size_col" value="$(arg checkerboard_size_col)" type="int" />
+      <param name="checkerboard_size_row" value="$(arg checkerboard_size_row)" type="int" />
+      <param name="checkerboard_square_size" value="$(arg checkerboard_square_size)" type="double" />
+      <param name="rotate_image_180" value="$(arg rotate_image_180)" type="bool" />
   </node>
+  <!--
+  <node name="input_viewer" pkg="image_view" type="image_view">
+      <remap from="image" to="$(arg color_image)" />
+      <param name="autosize" value="False" />
+  </node>
+  <node name="output_viewer" pkg="image_view" type="image_view">
+      <remap from="image" to="image_out" />
+      <param name="autosize" value="False" />
+  </node> -->
 </launch>
