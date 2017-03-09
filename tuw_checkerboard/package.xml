@@ -2,7 +2,10 @@
 <package>
   <name>tuw_checkerboard</name>
   <version>0.0.0</version>
-  <description>The tuw_checkerboard package</description>
+  <description>The tuw_checkerboard package is designed to detect one 
+    checkerboard and to estimate the pose of the checkerboard relative to the camera.
+    The detection itself is based on the opencv functions for checkerboards.
+  </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
