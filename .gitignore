@@ -49,9 +49,11 @@ build
 
 # KDevelop
 *kdev*
+*.orig
 
 # ROS
 build
 devel
 .catkin_workspace
 ./src/CMakeLists.txt
+
