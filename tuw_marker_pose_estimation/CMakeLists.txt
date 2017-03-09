@@ -26,8 +26,12 @@ generate_dynamic_reconfigure_options(
 
 ## The catkin_package macro generates cmake config files for your package
 catkin_package(
-        DEPENDS OpenCV
+#  INCLUDE_DIRS include
+#  LIBRARIES
+#  CATKIN_DEPENDS cv_bridge image_geometry image_transport image_view opencv tf
+#  DEPENDS system_lib
 )
+
 ###########
 ## Build ##
 ###########
