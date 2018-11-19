@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>tuw_aruco</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>This is a wrapper around the marker detection library ArUco.</description>
 
   <maintainer email="lukas.pfeifhofer@devlabs.pro">Lukas Pfeifhofer</maintainer>
