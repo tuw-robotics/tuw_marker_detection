@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>tuw_ellipses</name>
-  <version>0.0.7</version>
+  <version>0.1.0</version>
   <description>The tuw_ellipses package contains a computer vision library which is able to detect ellipses within images.  
     The package is able to estimate the pose of the circle related to the ellipse the circle diameter as well as the camera parameter are known.
     A dynamic reconfigure interface allows the user to tune the parameter of the system to ones needs.
