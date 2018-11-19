@@ -36,7 +36,7 @@
 #include <marker_msgs/MarkerDetection.h>
 
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_DECLARE_CLASS(tuw, EllipsesDetectionNode, tuw::EllipsesDetectionNode, nodelet::Nodelet)
+PLUGINLIB_EXPORT_CLASS(tuw::EllipsesDetectionNode, nodelet::Nodelet)
 using namespace tuw;
 
 EllipsesDetectionNode::~EllipsesDetectionNode() {
