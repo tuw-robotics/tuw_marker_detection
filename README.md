@@ -4,5 +4,5 @@ It contains a node to detect artags, ellipses and a camera library optimized for
 
 # tuw_uvc
 ## Dependencies
-sudo apt-get install libv4l-dev
-sudo apt-get install libsdl1.2-dev
+$ sudo apt-get install libv4l-dev;
+$ sudo apt-get install libsdl1.2-dev;
