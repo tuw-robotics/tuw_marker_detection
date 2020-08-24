@@ -1,3 +1,0 @@
-A novel approach  to fuse the information from multiple keypoint descriptors using the Dempster-Shafer Theory of evidence is proposed
-The matching results of each descriptor are transformed into an evidence distribution on which  a confidence factor is computed making use of its entropy. T
-Our method has been tested with the SIFT, SURF, ORB, BRISK and FREAK  obtaining an improvement  of up to 10 compared to the best one.
