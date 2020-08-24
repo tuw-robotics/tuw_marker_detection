@@ -1,4 +1,4 @@
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 add_executable(aruco_test_gl aruco_test_gl.cpp)
 add_executable(aruco_test_markermap_gl aruco_test_markermap_gl.cpp)
 
