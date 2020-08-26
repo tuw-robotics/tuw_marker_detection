@@ -133,9 +133,9 @@ void PoseEstimationComboMarkerNode::synchronizedFiducialsCallback(const marker_m
             cv::projectPoints(objectPoints, markerPose.getRVec(),  markerPose.getTVec(), camera_k, camera_d, imagePoints);
 
             // draw lines of different colours
-            cv::line(debugImage, imagePoints[0], imagePoints[1], cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::line(debugImage, imagePoints[0], imagePoints[2], cv::Scalar(0, 255, 0, 255), 1, CV_AA);
-            cv::line(debugImage, imagePoints[0], imagePoints[3], cv::Scalar(255, 0, 0, 255), 1, CV_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[1], cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[2], cv::Scalar(0, 255, 0, 255), 1, cv::LINE_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[3], cv::Scalar(255, 0, 0, 255), 1, cv::LINE_AA);
         }
 
 
@@ -191,19 +191,19 @@ void PoseEstimationComboMarkerNode::synchronizedFiducialsCallback(const marker_m
             std::vector<cv::Point2f> imagePoints;
             cv::projectPoints(objectPoints, markerPose.getRVec(),  markerPose.getTVec(), camera_k, camera_d, imagePoints);
             // draw lines of different colours
-            cv::line(debugImage, imagePoints[0], imagePoints[1], cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::line(debugImage, imagePoints[0], imagePoints[2], cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::line(debugImage, imagePoints[0], imagePoints[3], cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::line(debugImage, imagePoints[0], imagePoints[4], cv::Scalar(0, 0, 255, 255), 1, CV_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[1], cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[2], cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[3], cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::line(debugImage, imagePoints[0], imagePoints[4], cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
             //putText(debugImage, "x", imagePoints[1], cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 0, 255, 255), 2);
             //putText(debugImage, "y", imagePoints[2], cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0, 255), 2);
             //putText(debugImage, "z", imagePoints[3], cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 0, 0, 255), 2);
 
             int circleRadius = 5; // Pixel
-            cv::circle(debugImage, imagePoints[1], circleRadius, cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::circle(debugImage, imagePoints[2], circleRadius, cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::circle(debugImage, imagePoints[3], circleRadius, cv::Scalar(0, 0, 255, 255), 1, CV_AA);
-            cv::circle(debugImage, imagePoints[4], circleRadius, cv::Scalar(0, 0, 255, 255), 1, CV_AA);
+            cv::circle(debugImage, imagePoints[1], circleRadius, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::circle(debugImage, imagePoints[2], circleRadius, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::circle(debugImage, imagePoints[3], circleRadius, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+            cv::circle(debugImage, imagePoints[4], circleRadius, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
 
 
 
@@ -235,7 +235,7 @@ void PoseEstimationComboMarkerNode::synchronizedFiducialsCallback(const marker_m
         }
 
         for (auto &fiducial:msgEllipseFiducialDetection->fiducial) {
-            cv::circle(debugImage, cv::Point2f(fiducial.image_points[0].x, fiducial.image_points[0].y), 5, cv::Scalar(0, 0, 0, 255), 1, CV_AA);
+            cv::circle(debugImage, cv::Point2f(fiducial.image_points[0].x, fiducial.image_points[0].y), 5, cv::Scalar(0, 0, 0, 255), 1, cv::LINE_AA);
         }
 
         cv::imshow("combomarker_node_debug", debugImage);
