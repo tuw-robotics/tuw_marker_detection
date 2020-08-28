@@ -164,7 +164,7 @@ void Contour::Draw( unsigned char* pImgRGB ) {
     unsigned char *pDes;
     std::vector<cv::Range> idx = getSegmentIndexes () ;
     for ( unsigned int i = 0; i < idx.size(); i++ ) {
-        unsigned char pColor[] = {rand() / ( RAND_MAX/0xFF ), rand() / ( RAND_MAX/0xFF ), rand() / ( RAND_MAX/0xFF ) };
+        unsigned char pColor[] = {static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256) };
         for ( int index = idx[i].start; index < idx[i].end; index++ ) {
             cv::Point edge = (mEdges)[index];
             pDes = pImgRGB + ( 3 * ( mImgWidth * edge.y + edge.x ) );
