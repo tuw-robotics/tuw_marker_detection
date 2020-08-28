@@ -152,7 +152,7 @@ int Contour::getContours( std::vector<std::vector<cv::Point> > &contours, unsign
         if (length > min_length) {
             contours.push_back(std::vector<cv::Point>());
             for ( int index = idx[i].start; index < idx[i].end; index++ ) {
-	      CvPoint &edge = (mEdges)[index];
+	      cv::Point &edge = (mEdges)[index];
                 contours.back().push_back( edge);
             }
         }
@@ -166,7 +166,7 @@ void Contour::Draw( unsigned char* pImgRGB ) {
     for ( unsigned int i = 0; i < idx.size(); i++ ) {
         unsigned char pColor[] = {rand() / ( RAND_MAX/0xFF ), rand() / ( RAND_MAX/0xFF ), rand() / ( RAND_MAX/0xFF ) };
         for ( int index = idx[i].start; index < idx[i].end; index++ ) {
-            CvPoint edge = (mEdges)[index];
+            cv::Point edge = (mEdges)[index];
             pDes = pImgRGB + ( 3 * ( mImgWidth * edge.y + edge.x ) );
             for ( int j  = 0; j < 3; j++ ) {
                 pDes[j] = pColor[j];
@@ -190,7 +190,7 @@ void Contour::Init ( unsigned int iImgWidth, unsigned int iImgHeight, bool bAllo
     }
 }
 
-int Contour::GetImgDirectionIndex ( CvPoint tPoint ) {
+int Contour::GetImgDirectionIndex ( cv::Point tPoint ) {
     /* Direction of the change
     1   0   3
      *  *  *
@@ -269,7 +269,7 @@ void Contour::Perform ( unsigned char* pImgEdgeStrength, int defEdgeLinkMode, vo
 
 
 void Contour::Linking_Simple() {
-    CvPoint tPoint = cvPoint(0,0);
+    cv::Point tPoint(0,0);
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -320,7 +320,7 @@ void Contour::Linking_Simple() {
 //     }
 // }
 
-void Contour::Trace_Simple ( CvPoint tPoint, int *pEnd ) {
+void Contour::Trace_Simple ( cv::Point tPoint, int *pEnd ) {
     /*
       IplImage *pImgSimple = cvCreateImage(cvSize(mImgWidth, mImgHeight),8,3);
       cvZero(pImgSimple);
@@ -333,12 +333,12 @@ void Contour::Trace_Simple ( CvPoint tPoint, int *pEnd ) {
       */
     if (isInImage(tPoint)) {
         unsigned char *pPix = getImgEdge ( tPoint );
-        CvPoint tCurrent = tPoint;
+        cv::Point tCurrent = tPoint;
         bool bEnd = false;
         bool bStart = false;
-        std::stack<CvPoint> trace_to_start;
-        std::stack<CvPoint> trace_to_end;
-        std::stack<CvPoint> *pEdgeStack = &trace_to_start;
+        std::stack<cv::Point> trace_to_start;
+        std::stack<cv::Point> trace_to_end;
+        std::stack<cv::Point> *pEdgeStack = &trace_to_start;
         while (bEnd == false) {
             /*
                     if(bStart == false) pImgSimple->imageData[( tCurrent.y * mImgWidth + tCurrent.x )*3+1] = 0xFF;
@@ -389,7 +389,7 @@ void Contour::Trace_Simple ( CvPoint tPoint, int *pEnd ) {
             }
         }
         while (!pEdgeStack->empty()) {
-            CvPoint p = pEdgeStack->top();
+            cv::Point p = pEdgeStack->top();
             mEdges[mNrOfEdges++] = p;
             pEdgeStack->pop();
         }
@@ -399,7 +399,7 @@ void Contour::Trace_Simple ( CvPoint tPoint, int *pEnd ) {
 }
 
 void Contour::Linking_Contour() {
-    CvPoint tPoint = cvPoint(0,0);
+    cv::Point tPoint(0,0);
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -416,7 +416,7 @@ void Contour::Linking_Contour() {
     }
 }
 
-void Contour::Trace_Contour ( CvPoint tPoint, int *pEnd, unsigned int iCommingFromEdge ) {
+void Contour::Trace_Contour ( cv::Point tPoint, int *pEnd, unsigned int iCommingFromEdge ) {
     /*
       IplImage *pImgSimple = cvCreateImage(cvSize(mImgWidth, mImgHeight),8,3);
       cvZero(pImgSimple);
@@ -427,12 +427,12 @@ void Contour::Trace_Contour ( CvPoint tPoint, int *pEnd, unsigned int iCommingFr
       */
     if (isInImage(tPoint)) {
         unsigned char *pPix = getImgEdge ( tPoint );
-        CvPoint tCurrent = tPoint;
+        cv::Point tCurrent = tPoint;
         bool bEnd = false;
         bool bStart = false;
-        std::stack<CvPoint> trace_to_start;
-        std::stack<CvPoint> trace_to_end;
-        std::stack<CvPoint> *pEdgeStack = &trace_to_start;
+        std::stack<cv::Point> trace_to_start;
+        std::stack<cv::Point> trace_to_end;
+        std::stack<cv::Point> *pEdgeStack = &trace_to_start;
         while (bEnd == false) {
             *pPix = mEdgeProcessed;
             pEdgeStack->push(tCurrent);
@@ -485,7 +485,7 @@ void Contour::Trace_Contour ( CvPoint tPoint, int *pEnd, unsigned int iCommingFr
 
 
 void Contour::Linking_Gradient() {
-    CvPoint tPoint = cvPoint(0,0);;
+    cv::Point tPoint(0,0);;
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -502,10 +502,10 @@ void Contour::Linking_Gradient() {
     }
 }
 
-void Contour::Trace_Gradient ( CvPoint tPoint, int *pEnd ) {
+void Contour::Trace_Gradient ( cv::Point tPoint, int *pEnd ) {
     if (isInImage(tPoint)) {
-        CvPoint tCurrent = cvPoint(0,0);;
-        CvPoint tNext = cvPoint(0,0);;
+        cv::Point tCurrent(0,0);;
+        cv::Point tNext(0,0);;
         bool bRemove = false;
         unsigned char *pNeighbor;
         int iEdgeDirection;
@@ -542,7 +542,7 @@ void Contour::Trace_Gradient ( CvPoint tPoint, int *pEnd ) {
 
 
 void Contour::Linking_Complex() {
-    CvPoint tPoint = cvPoint(0,0);;
+    cv::Point tPoint(0,0);;
     cv::Range range(0,0);
     for ( tPoint.y = 1; tPoint.y < ( int ) mImgHeight-1; tPoint.y++ ) {
         tPoint.x = 1;
@@ -559,10 +559,10 @@ void Contour::Linking_Complex() {
     }
 }
 
-void Contour::Trace_Complex ( CvPoint tPoint, int *pEnd, unsigned int iCommingFromEdge ) {
+void Contour::Trace_Complex ( cv::Point tPoint, int *pEnd, unsigned int iCommingFromEdge ) {
     if (isInImage(tPoint)) {
-        CvPoint tCurrent;
-        CvPoint tNext = cvPoint(0,0);;
+        cv::Point tCurrent;
+        cv::Point tNext(0,0);;
         bool bRemove = false;
         unsigned char *pNeighbor = NULL;
         unsigned int iGointToEdge = 0;
@@ -604,7 +604,7 @@ void Contour::Trace_Complex ( CvPoint tPoint, int *pEnd, unsigned int iCommingFr
     }
 }
 
-const CvPoint Contour::GetNeighborPoint ( CvPoint tPoint, int iNeighborIndex ) {
+const cv::Point Contour::GetNeighborPoint ( cv::Point tPoint, int iNeighborIndex ) {
     switch ( iNeighborIndex ) {
     case 0:
         tPoint.x += -1;
@@ -677,15 +677,15 @@ const void Contour::SortArrayIndexes ( int *pArray, int *pIndexes, const int iSi
     }
 }
 
-void  Contour::GetAbnormitiesInEdgesImage ( IplImage *ptImgEdge, std::vector<CvPoint> *pAbnormities, uchar iEdgeStrength ) {
+void  Contour::GetAbnormitiesInEdgesImage ( cv::Mat *ptImgEdge, std::vector<cv::Point> *pAbnormities, uchar iEdgeStrength ) {
     pAbnormities->clear();
     bool bAbnormities;
-    CvPoint tPoint;
-    for ( tPoint.y = 1; tPoint.y < ptImgEdge->height-1; tPoint.y++ ) {
-        unsigned char *pRow0 = ( unsigned char * ) ptImgEdge->imageData + ptImgEdge->width* ( tPoint.y-1 );
-        unsigned char *pRow1 = pRow0 + ptImgEdge->width;
-        unsigned char *pRow2 = pRow1 + ptImgEdge->width;
-        for ( tPoint.x = 1; tPoint.x < ptImgEdge->width-1; tPoint.x++ ) {
+    cv::Point tPoint;
+    for ( tPoint.y = 1; tPoint.y < ptImgEdge->rows-1; tPoint.y++ ) {
+        unsigned char *pRow0 = ( unsigned char * ) ptImgEdge->data + ptImgEdge->cols* ( tPoint.y-1 );
+        unsigned char *pRow1 = pRow0 + ptImgEdge->cols;
+        unsigned char *pRow2 = pRow1 + ptImgEdge->cols;
+        for ( tPoint.x = 1; tPoint.x < ptImgEdge->cols-1; tPoint.x++ ) {
             bAbnormities = false;
             if ( pRow1[1] > iEdgeStrength ) {
                 int iNoOfNeighbors = 0;

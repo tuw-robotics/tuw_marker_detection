@@ -43,59 +43,58 @@
 #include <opencv2/core.hpp>
 
 namespace tuw {
-CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void* directionarr, void* dxarr, void* dyarr,
-                      double low_thresh, double high_thresh,
-                      int aperture_size )
+
+#define CV_CANNY_L2_GRADIENT (1 << 31)
+
+CV_EXTERN_C void tuwCanny( const cv::Mat* src, cv::Mat* dst, cv::Mat* gra, cv::Mat* dir, cv::Mat* dx, cv::Mat* dy,
+                           double low_thresh, double high_thresh,
+                           int aperture_size )
 {
     cv::AutoBuffer<char> buffer;
     std::vector<uchar*> stack;
     uchar **stack_top = 0, **stack_bottom = 0;
 
-    CvMat srcstub, *src = cvGetMat( srcarr, &srcstub );
-    CvMat dststub, *dst = cvGetMat( dstarr, &dststub );
-    CvMat dstgrad, *gra = cvGetMat( gradientarr, &dstgrad );  // Added by Markus Bader
-    CvMat dstdir, *dir = cvGetMat( directionarr, &dstdir );  // Added by Markus Bader
-    CvMat *dx = cvGetMat( dxarr, &dstgrad );  // Added by Markus Bader
-    CvMat *dy = cvGetMat( dyarr, &dstdir );  // Added by Markus Bader
-    CvSize size;
+    cv::Size size;
     int flags = aperture_size;
     int low, high;
     int* mag_buf[3];
     uchar* map;
     int mapstep, maxsize;
     int i, j;
-    CvMat mag_row;
 
-    if( CV_MAT_TYPE( gra->type ) != CV_16UC1 || // Added by Markus Bader
-        CV_MAT_TYPE( dir->type ) != CV_16UC1 ) // Added by Markus Bader
-        CV_Error( CV_StsUnsupportedFormat, "gradientarr or directionarr are not CV_16UC1" ); // Added by Markus Bader
-    if( CV_MAT_TYPE( dx->type ) != CV_16SC1 || // Added by Markus Bader
-        CV_MAT_TYPE( dy->type ) != CV_16SC1 ) // Added by Markus Bader
-        CV_Error( CV_StsUnsupportedFormat, "sobel_dx or sobel_dy are not CV_16SC1" ); // Added by Markus Bader
-    if( CV_MAT_TYPE( src->type ) != CV_8UC1 ||
-        CV_MAT_TYPE( dst->type ) != CV_8UC1 )
-        CV_Error( CV_StsUnsupportedFormat, "" );
+    if( gra->type() != CV_16UC1 || // Added by Markus Bader
+        dir->type() != CV_16UC1 ) // Added by Markus Bader
+        CV_Error( cv::Error::StsUnsupportedFormat, "gradientarr or directionarr are not CV_16UC1" ); // Added by Markus Bader
+    if( dx->type() != CV_16UC1 || // Added by Markus Bader
+        dy->type() != CV_16UC1 ) // Added by Markus Bader
+        CV_Error( cv::Error::StsUnsupportedFormat, "sobel_dx or sobel_dy are not CV_16SC1" ); // Added by Markus Bader
+    if( src->type() != CV_8UC1 ||
+        dst->type() != CV_8UC1 )
+        CV_Error( cv::Error::StsUnsupportedFormat, "" );
 
-    if( !CV_ARE_SIZES_EQ( src, dst ))
-        CV_Error( CV_StsUnmatchedSizes, "" );
+    if( src->size() != dst->size())
+        CV_Error( cv::Error::StsUnmatchedSizes, "" );
 
     if( low_thresh > high_thresh )
     {
         double t;
-        CV_SWAP( low_thresh, high_thresh, t );
+        // CV_SWAP
+        t = low_thresh;
+        low_thresh = high_thresh;
+        high_thresh = t;
     }
 
     aperture_size &= INT_MAX;
     if( (aperture_size & 1) == 0 || aperture_size < 3 || aperture_size > 7 )
-        CV_Error( CV_StsBadFlag, "" );
+        CV_Error( cv::Error::StsBadFlag, "" );
 
     size.width = src->cols;
     size.height = src->rows;
 
     // dx = cvCreateMat( size.height, size.width, CV_16SC1 );  // Removed by Markus Bader
     // dy = cvCreateMat( size.height, size.width, CV_16SC1 );  // Removed by Markus Bader
-    cvSobel( src, dx, 1, 0, aperture_size );
-    cvSobel( src, dy, 0, 1, aperture_size );
+    cv::Sobel( *src, *dx, CV_16SC1, 1, 0, aperture_size );
+    cv::Sobel( *src, *dy, CV_16SC1, 0, 1, aperture_size );
 
     /*if( icvCannyGetSize_p && icvCanny_16s8u_C1R_p && !(flags & CV_CANNY_L2_GRADIENT) )
     {
@@ -141,22 +140,21 @@ CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void
     memset( map, 1, mapstep );
     memset( map + mapstep*(size.height + 1), 1, mapstep );
 
-    /* sector numbers 
+    /* sector numbers
        (Top-Left Origin)
-
         1   2   3
-         *  *  * 
-          * * *  
+         *  *  *
+          * * *
         0*******0
-          * * *  
-         *  *  * 
+          * * *
+         *  *  *
         3   2   1
     */
 
     #define CANNY_PUSH(d)    *(d) = (uchar)2, *stack_top++ = (d)
     #define CANNY_POP(d)     (d) = *--stack_top
 
-    mag_row = cvMat( 1, size.width, CV_32F );
+    cv::Mat mag_row( 1, size.width, CV_32F );
 
     // calculate magnitude and angle of gradient, perform non-maxima supression.
     // fill the map with one of the following values:
@@ -167,8 +165,8 @@ CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void
     {
         int* _mag = mag_buf[(i > 0) + 1] + 1;
         float* _magf = (float*)_mag;
-        const short* _dx = (short*)(dx->data.ptr + dx->step*i);
-        const short* _dy = (short*)(dy->data.ptr + dy->step*i);
+        const short* _dx = (short*)(dx->data + dx->step*i);
+        const short* _dy = (short*)(dy->data + dy->step*i);
         uchar* _map;
         int x, y;
         int magstep1, magstep2;
@@ -213,8 +211,8 @@ CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void
         _map[-1] = _map[size.width] = 1;
         
         _mag = mag_buf[1] + 1; // take the central row
-        _dx = (short*)(dx->data.ptr + dx->step*(i-1));
-        _dy = (short*)(dy->data.ptr + dy->step*(i-1));
+        _dx = (short*)(dx->data + dx->step*(i-1));
+        _dy = (short*)(dy->data + dy->step*(i-1));
         
         magstep1 = (int)(mag_buf[2] - mag_buf[1]);
         magstep2 = (int)(mag_buf[0] - mag_buf[1]);
@@ -339,19 +337,19 @@ CV_IMPL void tuwCanny( const void* srcarr, void* dstarr, void* gradientarr, void
     for( i = 0; i < size.height; i++ )
     {
         const uchar* _map = map + mapstep*(i+1) + 1;
-        uchar* _dst = dst->data.ptr + dst->step*i;
+        uchar* _dst = dst->data + dst->step*i;
 	
 	
-        unsigned short* _dir = (unsigned short*)(dir->data.ptr + dir->step*i); // Added by Markus Bader
-        unsigned short* _gra = (unsigned short*)(gra->data.ptr + gra->step*i); // Added by Markus Bader
-        const short* _dx = (short*)(dx->data.ptr + dx->step*i); // Added by Markus Bader
-        const short* _dy = (short*)(dy->data.ptr + dy->step*i); // Added by Markus Bader
+        unsigned short* _dir = (unsigned short*)(dir->data + dir->step*i); // Added by Markus Bader
+        unsigned short* _gra = (unsigned short*)(gra->data + gra->step*i); // Added by Markus Bader
+        const short* _dx = (short*)(dx->data + dx->step*i); // Added by Markus Bader
+        const short* _dy = (short*)(dy->data + dy->step*i); // Added by Markus Bader
         
         for( j = 0; j < size.width; j++ ){
             _dst[j] = (uchar)-(_map[j] >> 1);
             if(_dst[j]) { // Added by Markus Bader
-	      _dir[j] = (unsigned short) cvFastArctan(_dy[j], _dx[j]); // Added by Markus Bader
-	      _gra[j] = cvSqrt(_dx[j]*_dx[j] + _dy[j]*_dy[j]);  // Added by Markus Bader
+	      _dir[j] = (unsigned short) cv::fastAtan2(_dy[j], _dx[j]); // Added by Markus Bader
+	      _gra[j] = cv::sqrt(_dx[j]*_dx[j] + _dy[j]*_dy[j]);  // Added by Markus Bader
 	    } else { // Added by Markus Bader
 	      _dir[j] = 0;  // Added by Markus Bader
 	      _gra[j] = 0;  // Added by Markus Bader
@@ -370,9 +368,9 @@ void Canny( const cv::Mat& image, cv::Mat& edges, cv::Mat& gradient, cv::Mat& di
     direction.create(src.size(), CV_16UC1);
     sobel_dx.create(src.size(), CV_16SC1);
     sobel_dy.create(src.size(), CV_16SC1);
-    CvMat _src = src, _dst = edges, _gradientarr = gradient, _directionarr = direction, dxarr = sobel_dx, dyarr = sobel_dy;
+    cv::Mat _src = src, _dst = edges, _gradientarr = gradient, _directionarr = direction, dxarr = sobel_dx, dyarr = sobel_dy;
     tuwCanny( &_src, &_dst, &_gradientarr, &_directionarr, &dxarr, &dyarr, threshold1, threshold2,
-        apertureSize + (L2gradient ? CV_CANNY_L2_GRADIENT : 0));
+          apertureSize + (L2gradient ? CV_CANNY_L2_GRADIENT : 0));
 }
 };
 

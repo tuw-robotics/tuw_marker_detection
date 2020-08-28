@@ -94,10 +94,10 @@ void EllipsesDetection::edge_detection(const cv::Mat &m) {
 void EllipsesDetection::contour_detection() {
     switch(param_->edge_linking) {
     case EDGE_LINKING_OPENCV_APPROX_NONE:
-        cv::findContours ( imgEdges_, contours_, CV_RETR_LIST, CV_CHAIN_APPROX_NONE );
+        cv::findContours ( imgEdges_, contours_, cv::RETR_LIST, cv::CHAIN_APPROX_NONE );
         break;
     case EDGE_LINKING_OPENCV_APPROX_SIMPLE:
-        cv::findContours( imgEdges_, contours_, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
+        cv::findContours( imgEdges_, contours_, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE );
         break;
     case EDGE_LINKING_TUW_SIMPLE:
         if(param_->edge_detection != EDGE_DETECTION_CANNY) break;

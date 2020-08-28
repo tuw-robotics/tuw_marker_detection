@@ -129,7 +129,7 @@ public:
     * @brief Find egde contour Abnormities in edge image
     * @return a vetor with points of the position abnormities
     **/
-    void GetAbnormitiesInEdgesImage ( IplImage *ptImgEdge, std::vector<CvPoint> *pAbnormities, uchar iEdgeStrength = 0 );
+    void GetAbnormitiesInEdgesImage ( cv::Mat *ptImgEdge, std::vector<cv::Point> *pAbnormities, uchar iEdgeStrength = 0 );
 
 private:
     unsigned char *mpImgEdge;
@@ -149,7 +149,7 @@ private:
     static const float fPi;
     static const double dPi;
     //CvPoint *mpEdges;
-    std::vector<CvPoint> mEdges;
+    std::vector<cv::Point> mEdges;
     std::vector<unsigned char> mAngle8Bit;
     unsigned int mNrOfEdges;
     std::vector<cv::Range> mSegments;
@@ -157,26 +157,26 @@ private:
     void AllocateMemory();
     void RelaseMemory();
     void Linking_Simple();
-    int GetImgDirectionIndex ( CvPoint tPoint );
-    void Trace_Simple ( CvPoint tPoint, int *pEnd );
+    int GetImgDirectionIndex ( cv::Point tPoint );
+    void Trace_Simple ( cv::Point tPoint, int *pEnd );
     void Linking_Complex();
-    void Trace_Complex ( CvPoint tPoint, int *pEnd, unsigned int iCommingFromEdge );
+    void Trace_Complex ( cv::Point tPoint, int *pEnd, unsigned int iCommingFromEdge );
     void Linking_Contour();
-    void Trace_Contour ( CvPoint tPoint, int *pEnd, unsigned int iCommingFromEdge );
+    void Trace_Contour ( cv::Point tPoint, int *pEnd, unsigned int iCommingFromEdge );
     void Linking_Gradient();
-    void Trace_Gradient ( CvPoint tPoint, int *pEnd );
+    void Trace_Gradient ( cv::Point tPoint, int *pEnd );
 
-    static const CvPoint GetNeighborPoint ( CvPoint pPtrCenter, int iNeighborIndex );
+    static const cv::Point GetNeighborPoint ( cv::Point pPtrCenter, int iNeighborIndex );
     static const void SortArrayIndexes ( int *pArray, int *pIndexes, const int iSize );
 
 //Inlines
-    inline unsigned char* getImgEdge ( CvPoint tPoint ) {
+    inline unsigned char* getImgEdge ( cv::Point tPoint ) {
         return mpImgEdge + ( tPoint.y * mImgWidth + tPoint.x );
     };
     inline void SumArrayMatrix ( int *pMatrixA, int *pMatrixB, int *pSum, const int iSize ) {
         for ( int i = 0; i < iSize; i++ ) pSum[i] = pMatrixA[i] + pMatrixB[i];
     };
-    inline bool isInImage( const CvPoint &p){
+    inline bool isInImage( const cv::Point &p){
         return ( ( p.x > 0 ) && ( p.x < mImgWidth-1 ) && ( p.y > 0 ) && ( p.y < mImgHeight-1 ) );
     }
     inline void markNeighborEdgesAsProcessed(unsigned char *pPix){

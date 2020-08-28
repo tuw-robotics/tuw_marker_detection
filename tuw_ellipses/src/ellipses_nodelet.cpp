@@ -103,7 +103,7 @@ void EllipsesDetectionNode::imageCallback(const sensor_msgs::ImageConstPtr& imag
         }
         cvtColor(image_mono_->image, img_debug, CV_GRAY2BGR);
         draw_ellipses(img_debug);
-        cv::putText(img_debug, ss.str(), cv::Point(10, 15), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar::all(0), 1, CV_AA);
+        cv::putText(img_debug, ss.str(), cv::Point(10, 15), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar::all(0), 1, cv::LINE_AA);
         cv::imshow( param()->node_name + std::string(" - input"), img_debug);
         if(param()->debug) {
             cv::imshow( param()->node_name + std::string(" - edges"), imgEdges_);

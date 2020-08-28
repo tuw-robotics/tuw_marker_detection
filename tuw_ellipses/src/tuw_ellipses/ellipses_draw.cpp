@@ -39,12 +39,12 @@ void EllipsesDetection::draw_ellipses(cv::Mat &img) {
         //cv::drawContours(img, contours_, (int) i, colourContour, 1, 8);
         cv::RotatedRect box1, box2;
         camera_.distort(ellipse.boxEllipse, box1);
-        cv::ellipse(img, box1, colourEllipse, 1, CV_AA);
+        cv::ellipse(img, box1, colourEllipse, 1, cv::LINE_AA);
         camera_.distort(ellipses_[ellipse.innerRing].boxEllipse, box2);
-        if(ellipse.innerRing >= 0) cv::ellipse(img, box2, colourEllipse, 1, CV_AA);
+        if(ellipse.innerRing >= 0) cv::ellipse(img, box2, colourEllipse, 1, cv::LINE_AA);
         box1.points(&vtx[0]);
         for( int j = 0; j < 4; j++ ) {
-            cv::line(img, vtx[j], vtx[(j+2)%4], cv::Scalar(0,255,0), 1, CV_AA);
+            cv::line(img, vtx[j], vtx[(j+2)%4], cv::Scalar(0,255,0), 1, cv::LINE_AA);
             sprintf(text, "%i", j);
             //cv::putText(img, text, vtx[j], cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar::all(0), 1, CV_AA);
         }
@@ -64,7 +64,7 @@ void EllipsesDetection::draw_ellipses(cv::Mat &img) {
                     cv::Point p0(pi.at<double>(j,0),pi.at<double>(j,1));
                     cv::circle(img, p0,2, cv::Scalar(125*j,125*j,255));
                     cv::Point p1(pin.at<double>(j,0),pin.at<double>(j,1));
-                    cv::line(img, p0, p1, cv::Scalar(125*j,125*j,255), 1, CV_AA);
+                    cv::line(img, p0, p1, cv::Scalar(125*j,125*j,255), 1, cv::LINE_AA);
                 }
             }
         }
