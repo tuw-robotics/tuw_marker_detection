@@ -212,9 +212,11 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
                 // draw 2d info
                 markers[i].draw(debugImage, cv::Scalar(0, 0, 255), 1);
 
-                // draw a 3d cube
-                aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], camParams);
-                aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], camParams);
+                // draw a 3d cube if pose is valid
+                if (markers[i].isPoseValid()) {
+                    aruco::CvDrawingUtils::draw3dCube(debugImage, markers[i], camParams);
+                    aruco::CvDrawingUtils::draw3dAxis(debugImage, markers[i], camParams);
+                }
             }
 
             cv::imshow("aruco_node_debug", debugImage);

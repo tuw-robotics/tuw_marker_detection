@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(tuw_aruco)
 
 # Set ArUco library path. (The containing cmake file will be added as subproject/library to this project)
-set("ARUCO_LIB_DIR" "aruco-2.0.10/")
+set("ARUCO_LIB_DIR" "aruco-3.1.12/")
 
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 

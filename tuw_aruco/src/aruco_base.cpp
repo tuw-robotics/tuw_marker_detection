@@ -37,15 +37,15 @@ ArUcoBase::ArUcoBase() : params_() {
 
 ArUcoBase::~ArUcoBase() { }
 
-void ArUcoBase::detectMarkers(vector<aruco::Marker> &markers, cv::Mat image) {
-    detector_.detect(image, markers);
+void ArUcoBase::detectMarkers(std::vector<aruco::Marker> &markers, cv::Mat image) {
+    detector_.detect(image, markers, aruco::CameraParameters());
 }
 
 void ArUcoBase::estimatePose(std::vector<ArUcoMarkerPose> &markerPoses, std::vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams) {
     markerPoses.clear();
     for (auto &marker:markers) {
-        bool success = tracker_[marker.id].estimatePose(marker, cameraParams, params_.getMarkerSize(), 1.0f);
-        if(success){
+        bool success = tracker_[marker.id].estimatePose(marker, cameraParams, params_.getMarkerSize());
+        if (success && marker.isPoseValid()){
             cv::Mat rtMatrix = tracker_[marker.id].getRTMatrix();
             markerPoses.push_back(ArUcoMarkerPose(marker.id, rtMatrix));
         }
@@ -58,6 +58,7 @@ ArUcoParameters &ArUcoBase::getParameters(){
 
 void ArUcoBase::refreshParameters() {
     detector_.setDictionary(params_.getDictionary());
-    detector_.setThresholdParams(7, 7);
-    detector_.setThresholdParamRange(2, 0);
+    detector_.setDetectionMode(aruco::DM_NORMAL);
+    // detector_.setThresholdParams(7, 7);
+    // detector_.setThresholdParamRange(2, 0);
 }
