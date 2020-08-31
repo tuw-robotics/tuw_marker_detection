@@ -55,7 +55,7 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
     cameraSubscriber_ = imageTransport_.subscribeCamera("image", 1, &ArUcoNode::imageCallback, this);
     
     if(base_.getParameters().getShowDebugImage()){
-      cv::namedWindow("aruco_node_debug", CV_WINDOW_NORMAL | CV_GUI_NORMAL);
+      cv::namedWindow("aruco_node_debug", cv::WINDOW_NORMAL | cv::WINDOW_GUI_NORMAL);
     }
 
 }
@@ -96,7 +96,7 @@ static tf::StampedTransform markerPoseToStampedTransform(ArUcoMarkerPose &marker
     return tf::StampedTransform(tf::Transform(rm, tv), ros::Time::now(), header.frame_id, markerLabel);
 }
 
-void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses) {
+void ArUcoNode::publishMarkers(const std_msgs::Header &header, std::vector<ArUcoMarkerPose> &markerPoses) {
     marker_msgs::MarkerDetection msg;
 
     msg.header = header;
@@ -136,7 +136,7 @@ void ArUcoNode::publishMarkers(const std_msgs::Header &header, vector<ArUcoMarke
         pub_markers_.publish(msg);
 }
 
-void ArUcoNode::publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
+void ArUcoNode::publishFiducials(const std_msgs::Header &header, std::vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_) {
     marker_msgs::FiducialDetection msg;
     msg.header = header;
     msg.camera_k = camer_info_->K;
@@ -185,7 +185,7 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
 
 
         // Detect markers
-        vector<aruco::Marker> markers;
+        std::vector<aruco::Marker> markers;
         base_.detectMarkers(markers, imgPtr->image);
 
         // If enabled publish fiducials
@@ -194,7 +194,7 @@ void ArUcoNode::imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const
 
         // If enabled do pose estimation for every marker found
         if (base_.getParameters().getPoseEstimationEnabled()) {
-            vector<ArUcoMarkerPose> markerPoses;
+            std::vector<ArUcoMarkerPose> markerPoses;
             base_.estimatePose(markerPoses, markers, camParams);
 
 

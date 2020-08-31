@@ -41,7 +41,7 @@ void ArUcoBase::detectMarkers(vector<aruco::Marker> &markers, cv::Mat image) {
     detector_.detect(image, markers);
 }
 
-void ArUcoBase::estimatePose(vector<ArUcoMarkerPose> &markerPoses, vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams) {
+void ArUcoBase::estimatePose(std::vector<ArUcoMarkerPose> &markerPoses, std::vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams) {
     markerPoses.clear();
     for (auto &marker:markers) {
         bool success = tracker_[marker.id].estimatePose(marker, cameraParams, params_.getMarkerSize(), 1.0f);

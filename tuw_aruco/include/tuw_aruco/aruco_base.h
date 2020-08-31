@@ -43,8 +43,8 @@ public:
 
     ~ArUcoBase();
 
-    void detectMarkers(vector<aruco::Marker> &markers, cv::Mat image);
-    void estimatePose(vector<ArUcoMarkerPose> &markerPoses, vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams);
+    void detectMarkers(std::vector<aruco::Marker> &markers, cv::Mat image);
+    void estimatePose(std::vector<ArUcoMarkerPose> &markerPoses, std::vector<aruco::Marker> &markers, aruco::CameraParameters cameraParams);
     ArUcoParameters &getParameters();
     void refreshParameters();
 

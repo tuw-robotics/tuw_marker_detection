@@ -70,9 +70,9 @@ private:
 
     void imageCallback(const sensor_msgs::ImageConstPtr &image_msg, const sensor_msgs::CameraInfoConstPtr &camer_info_);
 
-    void publishMarkers(const std_msgs::Header &header, vector<ArUcoMarkerPose> &markerPoses);
+    void publishMarkers(const std_msgs::Header &header, std::vector<ArUcoMarkerPose> &markerPoses);
 
-    void publishFiducials(const std_msgs::Header &header, vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
+    void publishFiducials(const std_msgs::Header &header, std::vector<aruco::Marker> &markers, const sensor_msgs::CameraInfoConstPtr &camer_info_);
 
     void configCallback(tuw_aruco::ArUcoConfig &config, uint32_t level);
 };
