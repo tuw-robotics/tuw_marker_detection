@@ -99,9 +99,9 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
 
 
     int flags = 0;
-    if ( config_.adaptive_thresh ) flags += CV_CALIB_CB_ADAPTIVE_THRESH;
-    if ( config_.normalize_image ) flags += CV_CALIB_CB_NORMALIZE_IMAGE;
-    if ( config_.filter_quads ) flags += CV_CALIB_CB_FILTER_QUADS;
+    if ( config_.adaptive_thresh ) flags += cv::CALIB_CB_ADAPTIVE_THRESH;
+    if ( config_.normalize_image ) flags += cv::CALIB_CB_NORMALIZE_IMAGE;
+    if ( config_.filter_quads ) flags += cv::CALIB_CB_FILTER_QUADS;
     if ( config_.fast_check ) flags += CALIB_CB_FAST_CHECK;
     bool patternfound = findChessboardCorners ( image_grey_, patternsize, image_corners_, flags );
 
@@ -230,9 +230,9 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
 
             int font = cv::FONT_HERSHEY_SIMPLEX;
             double fontScale = 1.0;
-            double thickness = 1.0;
-            double lineType = CV_AA;
-            double lineThickness = 3;
+            int thickness = 1.0;
+            int lineType = cv::LINE_AA;
+            int lineThickness = 3;
 
             cv::Mat_<double> Pi0 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, 0, 0, 1 );
             cv::Point2d pi0 ( Pi0 ( 0,0 ) / Pi0 ( 0,2 ), Pi0 ( 0,1 ) / Pi0 ( 0,2 ) );
@@ -241,19 +241,19 @@ void CheckerboardNode::callbackCamera ( const sensor_msgs::ImageConstPtr& image_
             cv::Mat_<double> Pi1 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << size, 0, 0, 1 );;
             cv::Point2d pi1 ( Pi1 ( 0,0 ) / Pi1 ( 0,2 ), Pi1 ( 0,1 ) / Pi1 ( 0,2 ) );
             cv::circle ( image_rgb_, pi1, 3, CV_RGB ( 255,0,0 ) );
-            putText ( image_rgb_, "X", pi1, font, fontScale, CV_RGB ( 255,0,0 ), thickness, CV_AA );
+            putText ( image_rgb_, "X", pi1, font, fontScale, CV_RGB ( 255,0,0 ), thickness, lineType );
             cv::line ( image_rgb_, pi0, pi1, CV_RGB ( 255,0,0 ), lineThickness );
 
             cv::Mat_<double> Pi2 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, size, 0, 1 );
             cv::Point2d pi2 ( Pi2 ( 0,0 ) / Pi2 ( 0,2 ), Pi2 ( 0,1 ) / Pi2 ( 0,2 ) );
             cv::circle ( image_rgb_, pi2, 3, CV_RGB ( 0,255,0 ) );
-            putText ( image_rgb_, "Y", pi2, font, fontScale, CV_RGB ( 0,255,0 ), thickness, CV_AA );
+            putText ( image_rgb_, "Y", pi2, font, fontScale, CV_RGB ( 0,255,0 ), thickness, lineType );
             cv::line ( image_rgb_, pi0, pi2, CV_RGB ( 0,255,0 ), lineThickness );
 
             cv::Mat_<double> Pi3 = projection_matrix_ * ( cv::Mat_<double> ( 4,1 ) << 0, 0, size, 1 );
             cv::Point2d pi3 ( Pi3 ( 0,0 ) / Pi3 ( 0,2 ), Pi3 ( 0,1 ) / Pi3 ( 0,2 ) );
             cv::circle ( image_rgb_, pi3, 3, CV_RGB ( 0,0,255 ) );
-            putText ( image_rgb_, "Z", pi3, font, fontScale, CV_RGB ( 0,0,255 ) , thickness, CV_AA );
+            putText ( image_rgb_, "Z", pi3, font, fontScale, CV_RGB ( 0,0,255 ) , thickness, lineType );
             cv::line ( image_rgb_, pi0, pi3, CV_RGB ( 0,0,255 ), lineThickness );
 
         }
