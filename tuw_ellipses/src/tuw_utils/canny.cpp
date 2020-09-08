@@ -65,9 +65,6 @@ CV_EXTERN_C void tuwCanny( const cv::Mat* src, cv::Mat* dst, cv::Mat* gra, cv::M
     if( gra->type() != CV_16UC1 || // Added by Markus Bader
         dir->type() != CV_16UC1 ) // Added by Markus Bader
         CV_Error( cv::Error::StsUnsupportedFormat, "gradientarr or directionarr are not CV_16UC1" ); // Added by Markus Bader
-    if( dx->type() != CV_16UC1 || // Added by Markus Bader
-        dy->type() != CV_16UC1 ) // Added by Markus Bader
-        CV_Error( cv::Error::StsUnsupportedFormat, "sobel_dx or sobel_dy are not CV_16SC1" ); // Added by Markus Bader
     if( src->type() != CV_8UC1 ||
         dst->type() != CV_8UC1 )
         CV_Error( cv::Error::StsUnsupportedFormat, "" );
