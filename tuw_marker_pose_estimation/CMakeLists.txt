@@ -87,3 +87,11 @@ target_link_libraries(pose_estimation_combomarker_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )
+
+#############
+## Install ##
+#############
+
+install(TARGETS pose_estimation_node pose_estimation_markermap_node pose_estimation_combomarker_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
