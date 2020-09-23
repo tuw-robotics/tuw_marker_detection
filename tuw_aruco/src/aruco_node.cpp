@@ -62,18 +62,18 @@ ArUcoNode::ArUcoNode(ros::NodeHandle &n) : n_(n), imageTransport_(n) {
 
 ArUcoNode::~ArUcoNode() {}
 
-static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::CameraInfoConstPtr &camer_info) {
+static aruco::CameraParameters cameraInfoToCameraParameters(const sensor_msgs::CameraInfoConstPtr &camera_info) {
     float camera_matrix_data[9];
     for(int i = 0; i < 9; i++)
-        camera_matrix_data[i] = camer_info->K[i];
+        camera_matrix_data[i] = camera_info->K[i];
     cv::Mat camera_matrix = cv::Mat(3, 3, CV_32F, camera_matrix_data);
 
     float distortion_coefficients_data[5];
     for(int i = 0; i < 5; i++)
-        distortion_coefficients_data[i] = camer_info->D[i];
+        distortion_coefficients_data[i] = camera_info->D[i];
     cv::Mat distortion_coefficients = cv::Mat(1, 5, CV_32F, distortion_coefficients_data);
 
-    return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camer_info->width, camer_info->height));
+    return aruco::CameraParameters(camera_matrix, distortion_coefficients, cv::Size(camera_info->width, camera_info->height));
 }
 
 static tf::StampedTransform markerPoseToStampedTransform(ArUcoMarkerPose &markerPose, const std_msgs::Header &header) {
