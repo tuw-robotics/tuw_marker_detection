@@ -1,0 +1,22 @@
+<launch>
+
+    <node pkg="tuw_aruco" type="aruco_node" name="arMarkerAruco" output="screen">
+        <param name="show_debug_image" value="true"/>
+
+        <param name="marker_dictonary" value="ARTOOLKITPLUSBCH"/>
+        <param name="marker_size" value="0.06"/>
+
+        <param name="publish_tf" value="true"/>
+        <param name="publish_markers" value="true"/>
+        <param name="publish_fiducials" value="false"/>
+        <param name="pose_estimation_enabled" value="true"/>
+
+
+        <remap from="image" to="/camera/image_raw"/>
+        <remap from="camera_info" to="/camera/camera_info"/>
+
+        <remap from="markers" to="/markersAruco"/>
+    </node>
+
+</launch>
+
