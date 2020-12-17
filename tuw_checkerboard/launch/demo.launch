@@ -6,6 +6,8 @@
   <arg name="checkerboard_square_size" default="0.03"/>
   <arg name="rotate_camera_image_180"  default="false"/>
   <arg name="rviz"                     default="true"/>
+  <arg name="device" default="0" />
+  <arg name="camera_cfg" default="logitech.yaml" />
   
   <node name="tuw_checkerboard_node" pkg="tuw_checkerboard" type="tuw_checkerboard_node" output="screen">
       <remap from="image" to="$(arg image)" />
@@ -15,6 +17,17 @@
   </node>
   
   
+
+  <node pkg="cv_camera" type="cv_camera_node" name="camera" output="screen">
+      <param name="device_id" value="$(arg device)"/>
+      <param name="camera_info_url" value="file://$(find tuw_checkerboard)/launch/cv_camera/$(arg camera_cfg)" />
+      <param name="rescale_camera_info" value="true" />
+      <param name="image_width" value="640" />
+      <param name="image_height" value="480" />
+      <remap from="/cv_camera/image_raw" to="/camera/image_raw"/>
+      <remap from="/cv_camera/camera_info" to="/camera/camera_info"/>
+  </node>
+    
   <!-- start rviz -->
   <group if="$(arg rviz)">
 	  <include file="$(find tuw_checkerboard)/launch/rviz.launch"/>

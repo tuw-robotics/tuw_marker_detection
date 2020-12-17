@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
 
     <arg name="device" default="0" />
@@ -7,7 +8,8 @@
         <param name="device_id" value="$(arg device)"/>
         <param name="camera_info_url" value="file://$(find tuw_aruco)/launch/cv_camera/$(arg camera_cfg)" />
         <param name="rescale_camera_info" value="true" />
-
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
         <remap from="/cv_camera/image_raw" to="/camera/image_raw"/>
         <remap from="/cv_camera/camera_info" to="/camera/camera_info"/>
     </node>
