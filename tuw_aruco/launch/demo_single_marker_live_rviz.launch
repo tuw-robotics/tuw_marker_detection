@@ -1,9 +1,0 @@
-<launch>
-
-    <!-- load tracker -->
-    <include file="$(find tuw_aruco)/launch/demo_single_marker_live.launch" />
-
-    <!-- load rviz -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tuw_aruco)/launch/demo_single_marker_live.rviz"/>
-
-</launch>

@@ -1,7 +1,0 @@
-<library path="lib/libellipses_nodelet">
-    <class name="tuw/EllipsesDetectionNode" type="tuw::EllipsesDetectionNode" base_class_type="nodelet::Nodelet">
-        <description>
-            This is my nodelet.
-        </description>
-    </class>
-</library>

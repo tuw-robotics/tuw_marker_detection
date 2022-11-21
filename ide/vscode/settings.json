@@ -1,0 +1,9 @@
+{
+    "cmake.buildDirectory" : "${workspaceRoot}/ws01/build/tuw_checkerboard/",
+    "cmake.sourceDirectory": "${workspaceFolder}/ws01/src/tuw_marker_detection/tuw_checkerboard",
+    "files.exclude": {
+        "*/build": true,
+        "*/install": true,
+        "*/log": true,
+    }
+}
