@@ -17,12 +17,11 @@ find_package(std_msgs REQUIRED)
 
 include_directories(include)
 
-add_library(composition_nodes SHARED
-            src/board_detector_node.cpp
-            src/board_pose_node.cpp)
-target_compile_definitions(composition_nodes
+add_library(checkerboard_detector_node SHARED
+            src/checkerboard_detector_node.cpp)
+target_compile_definitions(checkerboard_detector_node
   PRIVATE "TUW_CHECKERBOARD_DLL")
-ament_target_dependencies(composition_nodes rclcpp rclcpp_components std_msgs)
+ament_target_dependencies(checkerboard_detector_node rclcpp rclcpp_components std_msgs)
 
 # This package installs libraries without exporting them.
 # Export the library path to ensure that the installed libraries are available.
@@ -31,30 +30,24 @@ if(NOT WIN32)
     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}")
 endif()
 
-add_executable(composition_detector src/standalone_detector.cpp)
-target_link_libraries(composition_detector composition_nodes)
-ament_target_dependencies(composition_detector
+add_executable(detector src/standalone.cpp)
+target_link_libraries(detector checkerboard_detector_node)
+ament_target_dependencies(detector
   rclcpp)
 
-add_executable(composition_pose src/standalone_pose.cpp)
-target_link_libraries(composition_pose composition_nodes)
-ament_target_dependencies(composition_pose
-  rclcpp)
-
-add_executable(composition_composed src/composed.cpp)
-target_link_libraries(composition_composed composition_nodes)
-ament_target_dependencies(composition_composed rclcpp class_loader)
+add_executable(detector_composed src/composed.cpp)
+target_link_libraries(detector_composed checkerboard_detector_node)
+ament_target_dependencies(detector_composed rclcpp class_loader)
 
 install(TARGETS
-  composition_nodes
+  checkerboard_detector_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
 
 install(TARGETS
-  composition_detector
-  composition_pose
-  composition_composed
+  detector
+  detector_composed
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
